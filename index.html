@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0F14">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Winter Arc">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Winter Arc — Never Ending</title>
+<style>
+:root{
+  --bg:#0B0F14; --bg2:#121821; --panel:#161D28; --line:#243040;
+  --ink:#E9EDF2; --mute:#8996A6; --frost:#6FD3E8; --ember:#E8672C; --moss:#8FBF7A;
+  --violet:#B79CE8;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Georgia',"Iowan Old Style",serif;-webkit-font-smoothing:antialiased}
+.sans{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3,.disp{font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif}
+a{color:var(--frost)}
+.wrap{max-width:760px;margin:0 auto;padding:18px 16px 80px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);background:linear-gradient(var(--bg) 85%,transparent);z-index:5;padding-top:14px;padding-bottom:6px}
+body{height:100%}
+html{height:100%}
+.brand{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.brand h1{font-size:22px;margin:0;letter-spacing:.2px}
+.brand .sub{font-size:12px;color:var(--mute)}
+nav.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;font-family:inherit}
+nav.tabs button{background:none;border:1px solid var(--line);color:var(--mute);padding:7px 13px;border-radius:20px;font-size:13px;font-family:-apple-system,sans-serif;cursor:pointer;white-space:nowrap}
+nav.tabs button.active{background:var(--panel);color:var(--ink);border-color:var(--frost)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:14px}
+.block{border-left:3px solid var(--frost);padding-left:14px;margin-bottom:16px}
+.block.b-comm{border-color:var(--ember)}
+.block.b-speech{border-color:var(--violet)}
+.block.b-body{border-color:var(--moss)}
+.block h3{margin:0 0 2px;font-size:17px}
+.time{font-family:-apple-system,sans-serif;font-size:11px;color:var(--mute);letter-spacing:.5px}
+.desc{font-size:14.5px;line-height:1.55}
+
+/* ---- checklist task cards ---- */
+.datebar{display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:14px}
+.datebar button.nav{background:#0D1319;border:1px solid var(--line);color:var(--ink);width:32px;height:32px;border-radius:9px;font-size:16px;cursor:pointer;font-family:-apple-system,sans-serif}
+.datebar .dinfo{text-align:center;font-family:-apple-system,sans-serif}
+.datebar .dinfo .dnum{font-size:11px;color:var(--frost)}
+.datebar .jump{font-size:11px;color:var(--mute);background:none;border:none;text-decoration:underline;cursor:pointer;padding:0}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center;font-family:-apple-system,sans-serif}
+.stat .v{font-size:20px;color:var(--frost);font-weight:700}
+.stat .l{font-size:10.5px;color:var(--mute);margin-top:2px}
+.task{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--frost);border-radius:10px;padding:14px 16px;margin-bottom:12px;transition:border-color .15s}
+.task.b-comm{border-left-color:var(--ember)}
+.task.b-speech{border-left-color:var(--violet)}
+.task.b-body{border-left-color:var(--moss)}
+.task.done{border-color:var(--moss)}
+.task-main{display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.tickbox{flex:none;width:24px;height:24px;border-radius:7px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;margin-top:2px}
+.task.done .tickbox{background:var(--moss);border-color:var(--moss)}
+.tickbox svg{width:14px;height:14px;opacity:0}
+.task.done .tickbox svg{opacity:1}
+.task-txt{flex:1}
+.task-txt .tt{font-family:'Iowan Old Style',Georgia,serif;font-size:16.5px}
+.task-txt .td{font-size:12.5px;color:var(--mute);margin-top:2px;font-family:-apple-system,sans-serif}
+.task.done .tt{color:var(--mute);text-decoration:line-through}
+.info-btn{margin-top:10px;font-size:11.5px;color:var(--frost);background:none;border:none;text-decoration:underline;cursor:pointer;padding:0;font-family:-apple-system,sans-serif}
+.detail{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.detail.open{display:block}
+.hero{background:linear-gradient(135deg,#101720,#161D28 60%);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px}
+.hero .day-of{font-family:-apple-system,sans-serif;font-size:12px;color:var(--frost);letter-spacing:.5px;margin-bottom:4px}
+.hero h2{margin:2px 0 6px;font-size:24px}
+.hero .meta{font-size:13px;color:var(--mute);font-family:-apple-system,sans-serif}
+.progressbar{height:6px;background:#0D1319;border-radius:4px;overflow:hidden;margin-top:12px;border:1px solid var(--line)}
+.progressbar i{display:block;height:100%;background:linear-gradient(90deg,var(--frost),var(--ember))}
+.check{display:flex;align-items:flex-start;gap:10px;margin-top:8px;font-family:-apple-system,sans-serif;font-size:13.5px;color:var(--mute)}
+.check input{margin-top:3px}
+.check.done{color:var(--moss)}
+ol,ul{padding-left:20px;margin:6px 0}
+li{margin-bottom:4px;font-size:14px;line-height:1.5}
+.pill{display:inline-block;background:#0D1319;border:1px solid var(--line);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--mute);font-family:-apple-system,sans-serif;margin-right:6px}
+.twister{font-style:italic;font-size:15px;background:#0D1319;padding:10px 14px;border-radius:8px;border:1px solid var(--line)}
+.videobox{background:#0D1319;border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px}
+.videobox b{color:var(--frost)}
+.exline{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding:7px 0;font-size:14px}
+.exline:last-child{border-bottom:none}
+.exline .nm{flex:1}
+.exline .qty{color:var(--frost);font-family:-apple-system,sans-serif;font-size:12.5px;white-space:nowrap}
+.exnote{font-size:12.5px;color:var(--mute);margin-top:2px;font-family:-apple-system,sans-serif}
+.exup{font-size:11px;color:var(--moss);margin-top:2px;text-align:right}
+.small .exup{margin-left:4px;text-align:left}
+.weekgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:10px 0}
+.wcell{aspect-ratio:1;border-radius:6px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;font-family:-apple-system,sans-serif;color:var(--mute);cursor:pointer}
+.wcell.today{border-color:var(--frost);color:var(--frost);font-weight:bold}
+.wcell.done{background:rgba(143,191,122,.18);color:var(--moss)}
+.wcell.past{opacity:.5}
+select,input[type=date]{background:#0D1319;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-family:-apple-system,sans-serif;font-size:13px}
+.phaseLabel{font-family:-apple-system,sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ember)}
+.small{font-size:12px;color:var(--mute);font-family:-apple-system,sans-serif}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+footer{text-align:center;color:var(--mute);font-size:11px;margin-top:30px;font-family:-apple-system,sans-serif}
+button.act{background:var(--frost);color:#08110d;border:none;border-radius:8px;padding:10px 16px;font-family:-apple-system,sans-serif;font-weight:600;font-size:13px;cursor:pointer}
+button.act.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+.rowbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* ================= SPLASH SCREEN ================= */
+#splash{position:fixed;inset:0;z-index:9999;overflow:hidden;background:linear-gradient(180deg,#060911 0%,#0B121C 42%,#0A1017 72%,#05070A 100%);display:flex;align-items:flex-end;justify-content:center;transition:opacity .7s ease,visibility .7s ease;cursor:pointer}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+.splash-stars{position:absolute;inset:0;opacity:.75;animation:splTwinkle 4s ease-in-out infinite alternate;
+  background-image:
+    radial-gradient(1.6px 1.6px at 8% 18%,#eaf7fb 95%,transparent),
+    radial-gradient(1.2px 1.2px at 20% 42%,#eaf7fb 95%,transparent),
+    radial-gradient(1.6px 1.6px at 33% 12%,#eaf7fb 90%,transparent),
+    radial-gradient(1.2px 1.2px at 47% 28%,#eaf7fb 95%,transparent),
+    radial-gradient(1.6px 1.6px at 62% 9%,#eaf7fb 90%,transparent),
+    radial-gradient(1.2px 1.2px at 71% 33%,#eaf7fb 95%,transparent),
+    radial-gradient(1.6px 1.6px at 12% 58%,#eaf7fb 85%,transparent),
+    radial-gradient(1.2px 1.2px at 90% 20%,#eaf7fb 95%,transparent),
+    radial-gradient(1.6px 1.6px at 95% 48%,#eaf7fb 85%,transparent),
+    radial-gradient(1.2px 1.2px at 55% 52%,#eaf7fb 80%,transparent);
+  background-repeat:no-repeat}
+@keyframes splTwinkle{from{opacity:.4}to{opacity:.9}}
+.splash-moon{position:absolute;top:8%;right:15%;width:104px;height:104px;border-radius:50%;background:radial-gradient(circle at 36% 34%,#fbfeff,#dcf0f7 55%,#a9d8e6 100%);animation:splMoon 5s ease-in-out infinite alternate}
+@keyframes splMoon{from{box-shadow:0 0 40px 14px rgba(111,211,232,.30),0 0 80px 34px rgba(111,211,232,.12)}to{box-shadow:0 0 56px 22px rgba(111,211,232,.46),0 0 112px 52px rgba(111,211,232,.22)}}
+.splash-ridge{position:absolute;left:0;right:0;bottom:0;height:24%;background:#0A1119;clip-path:polygon(0% 62%,8% 40%,16% 56%,26% 24%,36% 50%,48% 18%,58% 48%,70% 28%,82% 52%,92% 34%,100% 56%,100% 100%,0% 100%)}
+.splash-ridge.back{bottom:-1%;height:19%;background:#060A0F;opacity:.9;clip-path:polygon(0% 70%,12% 46%,22% 66%,34% 36%,46% 60%,60% 30%,72% 58%,86% 40%,100% 62%,100% 100%,0% 100%)}
+.splash-figure{position:relative;z-index:5;width:150px;height:220px;margin-bottom:2%;filter:drop-shadow(0 0 18px rgba(0,0,0,.6))}
+.splash-figure .cape{transform-origin:80px 90px;animation:splCape 3.6s ease-in-out infinite}
+@keyframes splCape{0%,100%{transform:rotate(0deg)}50%{transform:rotate(2.2deg)}}
+.splash-figure .blade-edge{animation:splGlint 2.8s ease-in-out infinite}
+@keyframes splGlint{0%,100%{opacity:.35}50%{opacity:.9}}
+.splash-snow{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
+.splash-snow span{position:absolute;top:-8px;border-radius:50%;background:#EAF6FB;opacity:.85;animation-name:splFall;animation-timing-function:linear;animation-iteration-count:infinite}
+@keyframes splFall{0%{transform:translate(0,-8px)}100%{transform:translate(var(--drift,12px),112vh)}}
+.splash-text{position:relative;z-index:7;text-align:center;margin-bottom:8%;padding:0 20px}
+.splash-title{font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;letter-spacing:3px;font-size:22px;color:#E9EDF2;text-shadow:0 0 18px rgba(111,211,232,.35);animation:splFadeUp 1s ease both .15s}
+.splash-sub{font-family:-apple-system,sans-serif;font-size:12px;letter-spacing:1.5px;color:#8996A6;margin-top:8px;text-transform:uppercase;animation:splFadeUp 1s ease both .4s}
+@keyframes splFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.splash-sub .dots span{animation:splDot 1.4s ease-in-out infinite}
+.splash-sub .dots span:nth-child(2){animation-delay:.2s}
+.splash-sub .dots span:nth-child(3){animation-delay:.4s}
+@keyframes splDot{0%,80%,100%{opacity:.2}40%{opacity:1}}
+@media (prefers-reduced-motion:reduce){
+  .splash-stars,.splash-moon,.splash-figure .cape,.splash-figure .blade-edge,.splash-sub .dots span{animation:none}
+  .splash-snow{display:none}
+}
+.splash-aurora{position:absolute;inset:0 0 40% 0;background:linear-gradient(100deg,transparent 10%,rgba(60,200,170,.16) 30%,rgba(120,110,230,.14) 55%,transparent 80%);filter:blur(26px);animation:splAur 9s ease-in-out infinite alternate}
+@keyframes splAur{from{transform:translateX(-8%) skewX(-6deg);opacity:.5}to{transform:translateX(8%) skewX(6deg);opacity:.95}}
+.splash-shoot{position:absolute;top:14%;left:-10%;width:90px;height:2px;background:linear-gradient(90deg,transparent,#fff);opacity:0;animation:splShoot 5s ease-in 1.2s infinite}
+@keyframes splShoot{0%{opacity:0;transform:translate(0,0) rotate(18deg)}6%{opacity:1}22%{opacity:0;transform:translate(115vw,36vw) rotate(18deg)}100%{opacity:0}}
+.splash-rays{position:absolute;top:calc(8% - 70px);right:calc(15% - 70px);width:244px;height:244px;border-radius:50%;background:conic-gradient(transparent 0 8%,rgba(150,215,235,.12) 10%,transparent 14% 28%,rgba(150,215,235,.09) 30%,transparent 34% 52%,rgba(150,215,235,.12) 54%,transparent 58% 78%,rgba(150,215,235,.09) 80%,transparent 84%);-webkit-mask:radial-gradient(circle,#000 25%,transparent 70%);mask:radial-gradient(circle,#000 25%,transparent 70%);animation:splSpin 60s linear infinite}
+@keyframes splSpin{to{transform:rotate(360deg)}}
+.splash-figure .mist{opacity:0;animation:splMist 3.4s ease-out infinite}.splash-figure .m2{animation-delay:1.7s}
+@keyframes splMist{0%{opacity:0;transform:translate(0,0) scale(.6)}30%{opacity:.5}100%{opacity:0;transform:translate(16px,-12px) scale(2.4)}}
+.splash-figure .shine{animation:splShine 2.8s ease-in-out infinite}
+@keyframes splShine{0%{transform:translateY(0);opacity:0}15%{opacity:.95}85%{opacity:.95}100%{transform:translateY(100px);opacity:0}}
+.splash-tag{font-family:-apple-system,sans-serif;font-size:10px;letter-spacing:3px;color:#B98089;margin-top:5px;animation:splFadeUp 1s ease both .3s}
+.splash-bar{width:170px;height:3px;border-radius:3px;background:rgba(255,255,255,.1);margin:12px auto 0;overflow:hidden}
+.splash-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7A1F2B,#E8A6B0);animation:splBar 3.2s ease-out forwards}
+@keyframes splBar{to{width:100%}}
+@media (prefers-reduced-motion:reduce){.splash-aurora,.splash-shoot,.splash-rays,.splash-figure .mist,.splash-figure .shine,.splash-bar i{animation:none}.splash-bar i{width:100%}}
+html{-webkit-text-size-adjust:100%;overscroll-behavior-y:none}
+body{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;overscroll-behavior-y:none}
+*{scrollbar-width:none}::-webkit-scrollbar{display:none}
+button,.task-main,.wcell{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+textarea,input{font-size:16px!important}
+.datebar button.nav{width:44px;height:44px}
+.wrap{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:0;overflow:visible;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));background:rgba(11,15,20,.97);border-top:1px solid var(--line);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+nav.tabs button{flex:1;min-height:52px;border:none;border-radius:12px;padding:4px 2px;font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;color:var(--mute)}
+nav.tabs button i{font-style:normal;font-size:19px;line-height:1}
+nav.tabs button.active{background:rgba(111,211,232,.12);color:var(--frost);border:none}
+#installBtn{bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
+.sgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
+.sgrid button{height:48px;font-size:17px;background:#0D1319;color:var(--ink);border:1px solid var(--line);border-radius:9px}
+.sgrid button.ok{background:rgba(143,191,122,.2);color:var(--moss);border-color:var(--moss)}
+/* ---- phone polish (v11) ---- */
+:root{color-scheme:dark}
+.info-btn{padding:10px 0;font-size:13px}
+.datebar .jump{padding:8px 6px;font-size:12.5px}
+button.act{min-height:44px}
+.task-main{padding:2px 0}
+.exline{flex-wrap:wrap}
+.exline .qty{white-space:normal;text-align:right;max-width:100%}
+select,input[type=date]{min-height:40px}
+@media (max-width:420px){
+ .wrap{padding-left:12px;padding-right:12px}
+ .card{padding:14px}.hero{padding:16px}.hero h2{font-size:21px}
+ .small{font-size:13px}li{font-size:14.5px}
+ .exline{flex-direction:column;gap:2px}.exline .qty{text-align:left}
+ .grid2{grid-template-columns:1fr}
+ .splash-moon{width:80px;height:80px}.splash-figure{width:130px;height:190px}
+}
+@media (max-height:560px){.splash-figure{width:105px;height:150px}}
+/* ---- v13 Android feel ---- */
+html,body{overscroll-behavior-y:contain;-webkit-tap-highlight-color:transparent}
+button,.task-main,.wcell{touch-action:manipulation}
+.nowbar{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13.5px;color:var(--frost)}
+</style>
+</head>
+<body>
+<div id="splash" role="img" aria-label="Winter Arc loading">
+  <div class="splash-stars"></div>
+  <div class="splash-aurora"></div><div class="splash-shoot"></div><div class="splash-rays"></div><div class="splash-moon"></div>
+  <div class="splash-ridge back"></div>
+  <div class="splash-ridge"></div>
+  <svg class="splash-figure" viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="bladeRed" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#B23A4A"/>
+        <stop offset="55%" stop-color="#7A1F2B"/>
+        <stop offset="100%" stop-color="#420E16"/>
+      </linearGradient>
+    </defs>
+    <!-- cape -->
+    <g class="cape">
+      <path d="M72,82 C34,114 20,190 46,258 C53,272 65,278 79,270 C60,224 57,154 84,94 Z" fill="#03050A" opacity="0.96"/>
+    </g>
+    <!-- back/relaxed arm -->
+    <path d="M74,88 C63,102 57,124 59,148 L72,152 C71,127 77,105 85,91 Z" fill="#03050A"/>
+    <!-- legs (wide, grounded stance) -->
+    <path d="M76,198 L62,254 L52,306 L76,306 L84,252 L90,198 Z" fill="#03050A"/>
+    <path d="M114,198 L110,252 L118,306 L142,306 L130,254 L124,198 Z" fill="#03050A"/>
+    <!-- torso, broad shoulders tapering to waist then flaring at hips -->
+    <path d="M74,70 C67,88 65,112 71,142 L66,170 C64,182 67,192 76,198 L124,198 C133,192 136,182 134,170 L129,142 C135,112 133,88 126,70 C110,57 90,57 74,70 Z" fill="#03050A"/>
+    <!-- neck -->
+    <rect x="91" y="58" width="18" height="14" fill="#03050A"/>
+    <!-- head + hood -->
+    <circle cx="100" cy="44" r="18" fill="#03050A"/>
+    <path d="M100,14 L84,42 C89,33 95,29 100,28 C105,29 111,33 116,42 Z" fill="#03050A"/>
+    <!-- sword arm reaching to hilt -->
+    <path d="M126,84 C140,98 149,118 151,142 L137,150 C133,124 125,105 115,92 Z" fill="#03050A"/>
+    <!-- sword, planted point-down, wine-red blade -->
+    <g class="sword">
+      <path d="M148,172 L154,172 L151,300 Z" fill="url(#bladeRed)"/>
+      <path class="shine" d="M150.3,176 L150.5,192" stroke="#FFD5DB" stroke-width="1.6" stroke-linecap="round" opacity="0"/>
+      <path class="blade-edge" d="M150,176 L150.5,294" stroke="#E8A6B0" stroke-width="1.3" stroke-linecap="round" opacity=".55"/>
+      <rect x="130" y="166" width="40" height="7" rx="2.5" fill="#20130F" transform="rotate(-7 150 169.5)"/>
+      <rect x="146" y="148" width="8" height="19" rx="2.5" fill="#20130F"/>
+      <circle cx="150" cy="147" r="5.5" fill="#20130F"/>
+    </g>
+    <circle class="mist" cx="112" cy="42" r="3" fill="#CFEAF3"/><circle class="mist m2" cx="112" cy="42" r="3" fill="#CFEAF3"/>
+    <!-- moonlit rim-light along the right silhouette edge -->
+    <path d="M126,70 C133,88 135,112 129,142 L134,170 C136,182 133,192 124,198 M124,198 L130,254 L142,306" fill="none" stroke="#8FD6EA" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+  </svg>
+  <div class="splash-snow" id="splashSnow"></div>
+  <div class="splash-text">
+    <div class="splash-title">❄ WINTER ARC</div>
+    <div class="splash-tag">THE ARC NEVER ENDS</div>
+    <div class="splash-sub" id="splashMsg">Sharpening the blade…</div><div class="splash-bar"><i></i></div>
+  </div>
+</div>
+<div class="wrap">
+<header class="top">
+  <div class="brand">
+    <h1>❄ Winter Arc</h1>
+    <div class="sub sans"><span id="todayTag"></span><span id="offBadge" style="color:var(--moss);margin-left:8px"></span></div>
+  </div>
+  <nav class="tabs sans">
+    <button data-tab="today" class="active"><i>⚔️</i>Today</button>
+    <button data-tab="week"><i>📅</i>Week</button>
+    <button data-tab="calendar"><i>🗓️</i>Calendar</button>
+    <button data-tab="guide"><i>📖</i>Guide</button>
+    <button data-tab="progress"><i>📈</i>Progress</button>
+  </nav>
+</header>
+
+<button id="installBtn" class="sans" style="display:none;position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;background:var(--frost);color:#08110d;border:none;border-radius:24px;padding:12px 18px;font-weight:700;font-size:14px;box-shadow:0 4px 16px rgba(0,0,0,.4);cursor:pointer">📲 Install App</button>
+<div id="iosHint" class="sans" style="display:none;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:var(--mute)">📲 To install: tap the Share icon in Safari, then "Add to Home Screen."</div>
+
+<div id="today"></div>
+<div id="week" style="display:none"></div>
+<div id="calendar" style="display:none"></div>
+<div id="guide" style="display:none"></div>
+<div id="progress" style="display:none"></div>
+
+<footer>Winter Arc v13 · India time (IST) · from 1 Dec 2026 · never ends · fully offline app · works in airplane mode · your data stays only on this device</footer>
+</div>
+
+<script>
+/* ============ v13: INDIA TIME (IST = UTC+5:30, no daylight saving) ============ */
+/* "Today" always follows India Standard Time, whatever time zone the phone is set to. */
+var _D = Date, IST_MIN = 330;
+function nowIST(){ var t=new _D(); return new _D(t.getTime()+(t.getTimezoneOffset()+IST_MIN)*60000); }
+var BLOCKS=[["Meditation",300,360],["Communication",360,420],["Voice & speech",1140,1200],["Body",1200,1260],["Night shutdown",1275,1290]];
+function hm(m){ var h=Math.floor(m/60)%24, mm=m%60; return ((h+11)%12+1)+':'+('0'+mm).slice(-2)+(h<12?' AM':' PM'); }
+function nowNext(){
+  var n=nowIST(), m=n.getHours()*60+n.getMinutes(), i, b, d, head='IST '+hm(m)+' · ';
+  for(i=0;i<BLOCKS.length;i++){ b=BLOCKS[i]; if(m>=b[1]&&m<b[2]) return head+'🟢 Now: '+b[0]+' · '+(b[2]-m)+' min left (ends '+hm(b[2])+')'; }
+  for(i=0;i<BLOCKS.length;i++){ b=BLOCKS[i]; if(m<b[1]){ d=b[1]-m; return head+'⏭ Next: '+b[0]+' at '+hm(b[1])+' · in '+(d>=60?Math.floor(d/60)+' h '+(d%60)+' min':d+' min'); } }
+  return head+'🌙 Day done. Lights out by 9:30 PM. Meditation starts at 5:00 AM.';
+}
+/* ============ CONFIG ============ */
+var START = new Date(2026,11,1);  // 1 Dec 2026 — the arc never ends from here
+function elapsed(){ var t=nowIST(); t.setHours(0,0,0,0); return Math.max(0, Math.round((t-START)/86400000)+1); }
+function level(w){ return 1+Math.floor((w-1)/4); } // a new level every 4 weeks, forever
+
+/* ============ PHASES (intensity ramps) ============ */
+var PHASES = [
+ {name:"Foundation", weeks:[1,3],  mult:1.00, sets:0, med:"Learn the raw technique. Keep instructions literal, sit still even when uncomfortable.", voice:"Focus only on speech clarity and articulation — slow and clean beats loud and fast."},
+ {name:"Build",      weeks:[4,7],  mult:1.15, sets:0, med:"Spend the first 2 min of the main practice on Nadi Shodhana (alternate-nostril breathing) as a warm-up.", voice:"Deepen clarity — sharper consonants, fuller vowels, still slow and controlled."},
+ {name:"Ignite",     weeks:[8,12], mult:1.30, sets:1, med:"Spend the first 5 min of the main practice on Trataka (candle-gazing concentration) to sharpen focus.", voice:"Push articulation and resonance together under mild pressure — stand, don't sit, for all drills."},
+ {name:"Forge",      weeks:[13,17],mult:1.50, sets:1, med:"Deepen stillness: stay with each phase of today's practice longer, and spend the last 3 min of the main practice on a Yoga Nidra body scan.", voice:"Full clarity intensity — record every session and review your articulation critically. Public-speaking weeks alternate with voice-lab weeks."},
+ {name:"Temper",     weeks:[18,22],mult:1.75, sets:2, med:"Self-lead: no counting, no script — sit through the full 30-minute main practice like it's nothing. This is the test of everything before it.", voice:"The evening block alternates between voice-lab weeks and public-speaking weeks."}
+];
+function phaseForWeek(w){
+  for(var i=0;i<PHASES.length;i++){ if(w>=PHASES[i].weeks[0] && w<=PHASES[i].weeks[1]) return {p:PHASES[i], idx:i}; }
+  var L=Math.floor((w-23)/4)+1;
+  return {p:{name:"Mastery "+L, weeks:[w,w], mult:Math.min(2.6,1.75+0.05*L), sets:L>=4?3:2, med:PHASES[4].med, voice:"Endless mastery: two weeks of deep-voice and slow-speech lab, then two weeks of live public speaking. Record every session and beat last month's recording."}, idx:4};
+}
+
+/* ============ MEDITATION (by weekday, 5:00-6:00am) ============ */
+var MED = [
+ {name:"Open Awareness / Silent Sitting", type:"Open Monitoring (Mindfulness) meditation", builds:"Trains non-reactive, sustained attention: the skill of noticing a thought or distraction the moment it appears and returning to the present without getting pulled into it. This 'notice and return' rep is the core mechanism behind a longer attention span.", steps:[
+   "Sit cross-legged or in a chair, spine upright, hands resting on knees, eyes closed.",
+   "Don't control the breath — just notice it, and notice sounds, sensations, thoughts as they arise.",
+   "When you notice you've drifted into a thought, silently note 'thinking' and return attention to the present moment.",
+   "No technique to \"do\" — the practice is simply staying awake to whatever is here.",
+   "In the final 3 minutes, sit in total stillness with eyes still closed before opening them slowly."]},
+ {name:"Box Breathing (4-4-4-4)", type:"Focused-Attention (Concentration) meditation", builds:"Anchors attention to a single repeating count. Every time the mind drifts, the next count gives an immediate, obvious cue to pull it back — that repeated catch-and-return is what strengthens the 'attention muscle' fastest.", steps:[
+   "Sit upright, hand on your belly. Exhale fully to start empty.",
+   "Inhale through the nose for a count of 4, expanding the belly.",
+   "Hold the breath (lungs full) for a count of 4.",
+   "Exhale through the nose for a count of 4, drawing the belly in.",
+   "Hold empty for a count of 4. This is one full box — repeat continuously for the session.",
+   "If the count feels tight, drop to 3-3-3-3 rather than gasping — control beats duration."]},
+ {name:"Body Scan (Progressive Relaxation)", type:"Body-Based (Somatic) concentration meditation", builds:"Forces attention to move deliberately through one narrow target at a time — a single body part — instead of wandering freely. Holding focus on something small and specific, region by region, is direct concentration training, not just relaxation.", steps:[
+   "Lie down or sit reclined, eyes closed, breathing naturally.",
+   "Bring attention to your feet — notice sensation, then consciously soften/relax them.",
+   "Move attention slowly upward: calves, thighs, hips, stomach, chest, hands, arms, shoulders, neck, jaw, face, scalp.",
+   "Spend roughly 3 minutes per major region; don't rush the scan.",
+   "If you find tension, breathe into that spot for two breaths before moving on.",
+   "Finish by feeling the whole body at once, heavy and loose, for the last minute."]},
+ {name:"Breath Awareness (Anapana)", type:"Concentration (Samatha) meditation — the classical root practice", builds:"The purest single-point focus drill in the rotation: nostrils only, no story, no imagery, just the raw sensation of air. Because there's nothing to do but notice and return, this builds sustained concentration faster than almost anything else here.", steps:[
+   "Sit upright. Close your eyes and bring full attention to the sensation of breath at the nostrils.",
+   "Don't change the breath — just observe it: cool air in, warm air out.",
+   "Each time the mind wanders, gently escort attention back to the nostrils without frustration.",
+   "Optionally count breaths silently 1–10, then restart at 1 if you lose count.",
+   "This is a pure concentration drill — the goal is an unbroken chain of noticed breaths."]},
+ {name:"Visualization (Success Rehearsal)", type:"Guided Visualization meditation", builds:"Holding a detailed mental image steady for several minutes trains working memory and voluntary attention control — the same 'keep this one thing in mind and don't let it slip' muscle you use when concentrating on a task.", steps:[
+   "Sit or lie comfortably, eyes closed, take 5 slow breaths to settle.",
+   "Picture today unfolding exactly as you want it — see yourself doing the hard parts calmly and well.",
+   "Engage all senses: what do you see, hear, feel in that successful moment? Make it vivid, not vague.",
+   "Rehearse one specific challenge you expect today and see yourself handling it with composure.",
+   "Close by picturing yourself at the end of the day, satisfied, having followed through."]},
+ {name:"Walking Meditation (or seated if weather is bad)", type:"Movement-Based Mindfulness meditation", builds:"Splits attention across two channels at once — breath and footstep sensation — at a slow, controlled pace. Keeping focus stable while the body is active is a harder, more real-world version of concentration than sitting still.", steps:[
+   "Walk slowly in a quiet space — indoors in a line, or outside if possible.",
+   "Feel each foot: lifting, moving, placing. Match the rhythm to your breath (e.g. 3 steps per inhale).",
+   "Keep gaze soft and low, a few metres ahead, attention on sensation rather than surroundings.",
+   "When the mind wanders, return focus to the physical feeling of the feet and legs.",
+   "If space is tight, do this seated instead: rest attention on the rise/fall of the chest at the same slow pace."]},
+ {name:"Loving-Kindness (Metta)", type:"Loving-Kindness (Metta) meditation — an open-heart concentration practice", builds:"Attention is anchored on a single repeated phrase and a chosen person, so a wandering mind is easy to catch, while also training emotional steadiness — the calm, undistracted state concentration depends on.", steps:[
+   "Sit comfortably, eyes closed, take a few settling breaths.",
+   "Silently repeat: 'May I be well. May I be happy. May I be at ease.' — mean it, don't just recite it.",
+   "Bring to mind someone you love; repeat the same phrases directed at them.",
+   "Bring to mind someone neutral (a stranger, a colleague); repeat the phrases for them too.",
+   "If ready, bring to mind someone difficult and extend the same phrases — this is the advanced step, skip it early on if it's too much.",
+   "Close by silently wishing the same ease to 'all beings, everywhere.'"]}
+];
+
+/* ============ COMMUNICATION VIDEOS (6:00-7:00am, by weekday) — real, verifiable ============ */
+var VIDEOS = [
+ {channel:"TED", title:"Celeste Headlee — \"10 Ways to Have a Better Conversation\"", note:"TEDxCreativeCoast talk on listening and conversational discipline."},
+ {channel:"Charisma on Command", title:"\"6 Public Speaking Tips to Hook Any Audience\"", note:"Watch once fully, then re-watch with pen and paper, noting 3 techniques to try today."},
+ {channel:"TED", title:"Amy Cuddy — \"Your Body Language May Shape Who You Are\"", note:"Focus on the posture and voice cues, not just the study — you'll use these in your 7pm block."},
+ {channel:"TED", title:"Julian Treasure — \"How to Speak So That People Want to Listen\"", note:"Note his 7 deadly sins of speaking and the vocal toolbox he describes."},
+ {channel:"TED-Ed", title:"Camille A. Langston — \"How to Use Rhetoric to Get What You Want\"", note:"Short, dense — watch twice, second time pausing to write down the 3 rhetorical appeals."},
+ {channel:"English with Lucy", title:"Her channel's pronunciation playlist", note:"On YouTube, open her channel, tap Videos, sort by \"Popular,\" and pick any video with \"pronunciation\" or \"sound more fluent\" in the title. Her whole channel is dedicated to clear British-English pronunciation, so any match works."},
+ {channel:"Vinh Giang", title:"His channel's vocal-variety playlist", note:"On YouTube, open his channel, tap Videos, sort by \"Popular,\" and pick any video with \"vocal variety\" or \"sound confident\" in the title. He teaches voice-as-instrument techniques directly relevant to your 7pm block, so any match works."}
+];
+
+/* ============ v12: COMMUNICATION CURRICULUM (2 weeks per skill, repeats at a higher level) ============ */
+var COMM=[
+ ["Listening & questions","In every conversation today ask 2 follow-up questions before giving your own view, and repeat back one sentence of what the person said."],
+ ["Structure: point, reason, example","Answer every question you are asked today in 3 parts: point, reason, example. Rehearse one answer aloud in the mirror."],
+ ["Storytelling","Tell one story today: situation, struggle, solution, lesson. Keep it under 2 minutes and pause before the key moment."],
+ ["Precise words, no fillers","Swap every “like”, “um”, “you know” for a silent pause. Count fillers in today's recording and beat yesterday's number."],
+ ["Conversation & small talk","Start 2 conversations today with an open question (what, how, why). Remember one personal detail and use it later."],
+ ["Presence & body language","Record 2 minutes standing: feet planted, hands still, steady eye line. Fix one habit (swaying, fidgeting, looking down)."],
+ ["Persuasion & rhetoric","Argue a position in 90 s: claim, 2 reasons, 1 example, call to action. Then argue the opposite side just as well."],
+ ["Thinking on your feet","Do 3 impromptu 60-second answers on random topics. Open with your point in the first sentence and end with a clear closing line."],
+ ["Q&A and disagreement","Practise calm replies: pause 2 s, then answer in 3 sentences. Disagree out loud once today, politely and clearly."],
+ ["Warmth, humour & rapport","Give 2 specific, sincere compliments, share one light self-aware story, and begin every conversation with a real smile."],
+ ["Leading groups","Lead something small today: introduce someone, run a 5-minute discussion, or give a short update with a clear opening and close."],
+ ["Asking & negotiating","Make one clear request today: say what you want and why it helps them, then stay silent. Practise a calm, polite “no”."],
+ ["Signature talk","Build a 5-minute talk on your own story: hook, 3 points, close. Rehearse one section a day and deliver all of it on Sunday."]
+];
+var MJ=["What did you do today that the Day 1 version of you could not have done?","Which block ran on autopilot this week? Raise its standard tomorrow.","Who did you help, teach or lead this week with your new skills?","What are you chasing next: body, voice, mind or mouth? Set a measurable 4-week target.","Where is your discipline still conditional on mood? Write the rule that removes the choice.","Read one old journal entry. What is different about the person writing now?","What would the peak version of you do tomorrow that you are avoiding today?"];
+function skillBox(pl){
+  var k=Math.floor((pl.w-1)/2), c=COMM[k%COMM.length], a=k*2+1; c=[c[0],LESSON[k%LESSON.length]+' <b>Drill:</b> '+c[1]];
+  return '<div class="videobox" style="margin-top:10px"><b>🎯 Skill focus · weeks '+a+'–'+(a+1)+': '+c[0]+'</b><div class="small" style="margin-top:4px">'+c[1]+' Use it in the speaking step below and in real conversations all day.</div></div>';
+}
+function rampNote(pl){
+  return pl.w<=2 ? '<div class="videobox" style="margin-bottom:10px"><b>🌱 Ramp-in</b><div class="small" style="margin-top:4px">Main practice is 15 min in week 1 and 20 min in week 2, then 30 min from week 3. Spend spare minutes on the Mind Gym and extra stillness. Showing up at 5:00 matters more than duration.</div></div>' : '';
+}
+
+/* ============ v13: OFFLINE LESSONS, TOPICS, WORDS, HOME GUIDE ============ */
+var LESSON=[
+ "Most people wait for their turn to talk. Listen to understand: keep eye contact, let them finish, pause one second, then ask a follow-up using their own words (“What made you decide that?”).",
+ "Clear speakers use a frame. P-R-E-P: Point first, Reason second, Example third, Point again. Give the answer first and the background after.",
+ "A story has a person, a problem, a turning point and a lesson. Start in the middle of the action, add one vivid detail, slow down at the turning point, end with what it taught you.",
+ "Fillers fill silence you are afraid of. A pause feels long to you and natural to listeners. Breathe through the gap, then say the exact word instead of “thing”, “stuff” or “like”.",
+ "Use the FORD topics: Family, Occupation or studies, Recreation, Dreams. Ask an open question, give a short answer of your own, then ask again. Listen more than you talk.",
+ "Stand with both feet grounded, shoulders down, hands visible at waist height, chin level. Move slowly. Look at one person for a whole sentence, then move to the next.",
+ "People act on logic, feeling and trust. Give one fact, one human example and one reason you can be trusted, then finish with a single clear ask.",
+ "When stuck, use a frame: Past, Present, Future, or Point, Reason, Example. Say the first sentence slowly while your mind builds the second. A 2-second silence is fine.",
+ "Pause, repeat the question briefly, answer in three sentences, stop. Disagree with the idea, never the person: “I see it differently because…”. Lower your pitch and slow your pace.",
+ "Warmth is behaviour: smile first, use their name, match their pace, give specific praise (“your explanation of X was clear”) and show real curiosity.",
+ "A leader opens with the purpose, gives structure (“three points”), invites quiet people by name, keeps time, and closes with who does what by when.",
+ "State the request in one sentence, give one reason that helps them, then stay silent. Know your minimum acceptable result and your alternative. A polite “no” is a complete sentence."
+,"Hook (a question, number or story), three points, one story, a close that tells people what to remember or do. Cut anything that does not serve your one main message."];
+var TOPICS=["Describe your day from morning to night and what you would improve.","Explain how to make a cup of chai to someone who has never had one.","Talk about your town or city: what makes it special, and what you would change.","Describe the best meal you have ever eaten and why you remember it.","Which habit changed your life, or which habit do you want to build, and why?","Explain a festival you love to a visitor: what happens and why it matters.","Argue for or against: mobile phones help students more than they harm them.","Describe a teacher or elder who shaped you and the one lesson you took from them.","Explain the rules of cricket, kabaddi or chess to a complete beginner.","What would you do with one extra free hour every day?","Talk about a failure and what it taught you.","Describe your dream career and the first three steps toward it.","Argue for or against: early morning is the best time to work.","Give three reasons why sleep matters, with an example for each.","Describe a place where you feel calm, using all five senses.","Retell a story you were told as a child.","What does discipline mean to you? Give a real example.","Teach a skill you already have to a beginner in 2 minutes.","Describe a journey by train or bus and the people you met.","Talk about someone you admire and the one habit you will copy.","Name the biggest problem in your area and one practical fix.","Describe how you will look, sound and feel after six months of this program.","Explain how to prepare for an exam or an interview.","What advice would you give your 15-year-old self?","What is the difference between being busy and being productive?","Talk about a book, film or song that moved you, and why.","Describe your ideal day five years from now.","Explain why speaking slowly sounds confident.","Describe winter in your town: the weather, food and mood.","Introduce yourself in 60 seconds as if meeting your future boss.","Argue for or against: failure is necessary for success.","Explain how you stay calm before something important.","Tell about a time you helped someone, or someone helped you.","What do you want people to say about you in ten years?","Explain something you recently learned as if teaching a child.","Describe a small act of courage you saw or did this week."];
+var WORDS=["candid — honest and direct","concise — short but complete","articulate — clear and well spoken","composure — calm self-control","resilient — quick to recover from trouble","initiative — acting without being told","empathy — understanding another person’s feelings","integrity — doing right even when unseen","diligent — careful and hardworking","eloquent — fluent and persuasive","pragmatic — practical, not just theoretical","tenacity — refusing to give up","lucid — clear and easy to follow","assertive — confident and direct without being rude","rapport — a friendly, trusting connection","nuance — a small but important difference","credible — believable and trustworthy","deliberate — done carefully and on purpose","perceptive — quick to notice details","versatile — able to adapt to many tasks","meticulous — very careful about details","persevere — keep going despite difficulty","scrutinize — examine closely","conviction — a firmly held belief","poise — balanced, calm confidence","substantiate — back up with proof","advocate — publicly support an idea","cogent — clear, logical and convincing","succinct — brief and clearly expressed","impartial — fair, not taking sides","prudent — wise and careful about the future","adaptable — able to adjust to change","accountable — ready to take responsibility","humble — modest, not arrogant","gracious — polite, kind and generous","decisive — able to decide quickly and firmly","proactive — acting before problems arise","reliable — can be counted on","mindful — fully aware of the present moment","endure — bear hardship patiently","inspire — move someone to act","clarity — the quality of being clear","fluent — smooth and effortless in speech","stamina — energy to keep going for long","resolve — firm determination"];
+function wordsToday(pl){ var n=WORDS.length, b=(pl.i*3)%n; return [0,1,2].map(function(k){ return '<b>'+WORDS[(b+k)%n].replace(' — ','</b> — '); }).join('; '); }
+var CURTAB='today', LASTDAY=0;
+function gotoTab(name,push){
+  var changed=(name!==CURTAB); showTab(name);
+  if(name==='today') renderToday(); if(name==='week') renderWeek(); if(name==='calendar') renderCalendar(); if(name==='guide') renderGuide(); if(name==='progress') renderProgress();
+  if(push&&changed){ try{ history.pushState({tab:name},''); }catch(e){} }
+}
+function tagToday(){ var n=nowIST(); document.getElementById('todayTag').textContent = inProgram(n) ? ('Day '+(dayIndex(n)+1)+' · Level '+level(weekNumber(dayIndex(n)))) : 'Starts 1 Dec 2026'; }
+function dayRoll(){
+  var di=dayIndex(nowIST()); if(di===LASTDAY) return;
+  var wasToday=(dayIndex(viewDate)===LASTDAY); LASTDAY=di;
+  if(wasToday){ var n=nowIST(); n.setHours(0,0,0,0); if(inProgram(n)) viewDate=n; }
+  tagToday(); renderToday(); renderWeek();
+}
+function backupNudge(target){
+  var t=nowIST(); if(!sameDay(target,t)) return ''; var di=dayIndex(t); if(di<7) return '';
+  var last=null; try{ last=localStorage.getItem('wa2_lastbackup'); }catch(e){}
+  if(last!==null && di-parseInt(last,10)<14) return '';
+  return '<div class="card"><b>💾 Back up your progress</b><div class="small" style="margin-top:6px">Everything lives only on this phone. Open Progress → Export my data (.json) and save the file to Google Drive or send it to yourself on WhatsApp. Do this every 2 weeks.</div></div>';
+}
+function homeCards(){
+  return '<div class="card"><h3 style="margin-top:0">Home setup · no gym needed</h3><div class="small">'
+  +'<b>Must have:</b> a floor mat or a thick dari or blanket (tiles are cold and hard), a school bag or backpack for weight (fill it with books, an atta or rice packet, or water bottles), a towel, a sturdy table and chair.<br><br>'
+  +'<b>Get in month 1:</b> a doorway or wall-mounted pull-up bar and a resistance band set. Both are inexpensive online. Until the bar arrives, do inverted rows under a heavy, stable table.<br><br>'
+  +'<b>Safety:</b> do not jump on bare tile or marble, use the mat or the low-impact option. About 2 m × 2 m of space is enough. Stop at sharp pain, dizziness or chest pain. If you have an injury or any medical condition, check with a doctor first. Early-morning drills can be done at a low volume in another room so nobody is woken.</div></div>'
+  +'<div class="card"><h3 style="margin-top:0">Uttar Pradesh winter and food</h3><div class="small">'
+  +'<b>Cold, fog and air:</b> December and January mornings are cold and often foggy, and the air can be smoky. Do the 5:00 and 6:00 AM blocks indoors, wear a layer, keep warm water nearby and add 2 minutes of joint circles to every warm-up. Walk outdoors only when the air is clear. If it smells of smoke or stings your eyes or throat, walk indoors or march in place instead.<br><br>'
+  +'<b>Protein:</b> aim for about 1.2–1.6 g per kg of body weight a day (a 60 kg person needs roughly 72–96 g). Vegetarian sources: dal, rajma, chole, chana, paneer, dahi, milk, soya chunks, sattu, peanuts, roasted chana. If you eat them: eggs, chicken, fish. Rough guide: 1 egg ≈ 6 g · 100 g paneer ≈ 18 g · 1 katori cooked dal ≈ 7–10 g · 250 ml milk ≈ 8 g · 30 g roasted chana ≈ 6 g · 50 g dry soya chunks ≈ 25 g.<br><br>'
+  +'<b>Sample day:</b> breakfast: eggs or besan or moong chilla with curd · lunch: roti, dal, sabzi, curd · snack: roasted chana or peanuts with milk · dinner: paneer, soya or chicken sabzi with roti and dal. Eat your main meal around 6:30 PM if you can, or keep a late dinner light, and finish eating at least 60 minutes before lights-out. Drink about 3 L of water through the day. With kidney or other medical conditions, ask a doctor before raising protein.</div></div>'
+  +'<div class="card"><h3 style="margin-top:0">Android phone setup · fully offline</h3><div class="small">'
+  +'1) Open the app link once in Chrome with internet and wait for “✓ offline ready” at the top of Today.<br>2) Chrome ⋮ menu → Install app (or Add to Home screen).<br>3) Test it: turn on airplane mode and open the icon. It must load fully.<br>'
+  +'4) <b>Back up every 2 weeks:</b> Progress → Export my data, then save the file to Google Drive or WhatsApp it to yourself. Clearing Chrome’s site data or uninstalling deletes progress.<br>'
+  +'5) <b>Alarms</b> (Clock app, one label each): 4:50 AM Wake · 5:00 AM Meditation · 6:00 AM Communication · 7:00 PM Voice · 8:00 PM Body · 9:15 PM Night shutdown.<br>'
+  +'6) In Settings → Digital Wellbeing: Bedtime mode from 9:15 PM and an app timer on Instagram, YouTube or Reels.<br>'
+  +'7) All times in this app are India Standard Time (IST), even if the phone’s time zone is different.<br>8) To update: upload the new files, open the app once with internet, close it fully, then open it again.</div></div>';
+}
+/* ============ TONGUE TWISTERS (rotating pool, escalating difficulty) ============ */
+var TWISTERS = [
+ "Peter Piper picked a peck of pickled peppers.",
+ "She sells seashells by the seashore.",
+ "How much wood would a woodchuck chuck if a woodchuck could chuck wood?",
+ "Betty Botter bought some butter, but she said the butter's bitter.",
+ "Fuzzy Wuzzy was a bear; Fuzzy Wuzzy had no hair.",
+ "Red lorry, yellow lorry, red lorry, yellow lorry.",
+ "I scream, you scream, we all scream for ice cream.",
+ "Toy boat, toy boat, toy boat.",
+ "A proper copper coffee pot.",
+ "Unique New York, unique New York, you know you need unique New York.",
+ "Six slippery snails slid slowly seaward.",
+ "Freshly fried flying fish.",
+ "Which wristwatches are Swiss wristwatches?",
+ "Irish wristwatch, Swiss wristwatch.",
+ "The sixth sick sheikh's sixth sheep's sick.",
+ "Can you can a can as a canner can can a can?",
+ "A big black bug bit a big black bear.",
+ "Great Greek grape growers grow great Greek grapes.",
+ "I saw Susie sitting in a shoeshine shop.",
+ "Eleven benevolent elephants.",
+ "Willie's really weary.",
+ "Chop shops stock chops.",
+ "Wayne went to Wales to watch walruses.",
+ "The seething sea ceaseth and thus the seething sea sufficeth us.",
+ "Rory the warrior and Roger the worrier were reared wrongly in a rural brewery.",
+ "Lesser leather never weathered wetter weather better.",
+ "Imagine an imaginary menagerie manager managing an imaginary menagerie.",
+ "The thirty-three thieves thought that they thrilled the throne throughout Thursday.",
+ "Pad kid poured curd pulled cod.",
+ "A skunk sat on a stump and thunk the stump stunk, but the stump thunk the skunk stunk."
+];
+
+/* ============ EVENING DEEP-VOICE TONGUE TWISTERS (by weekday, for the 7pm resonance drill) ============ */
+var EVENING_TWISTERS = [
+ "Bake big batches of brown bread each Monday.",
+ "Nine nice night nurses nursing nicely.",
+ "Truly rural, truly rural, truly rural.",
+ "A big bug bit a bold bald bear, and the bold bald bear bled blood badly.",
+ "Black background, brown background, black background, brown background.",
+ "Flash message, flash message, flash message.",
+ "Round and round the rugged rock the ragged rascal ran."
+];
+
+/* ============ EVENING VOICE / SPEECH BLOCK (7:00-8:00pm, by weekday) ============ */
+/* Through 31 Jan 2027: full focus on speech clarity, articulation and slow, deliberate speech. */
+/* From 1 Feb 2027: shift into public-speaking practice. */
+var CLARITY_END = new Date(2027,0,31); // last day of the clarity/articulation phase
+
+var VOICE_CLARITY = [
+ {focus:"Recorded Review — Clarity Check", steps:[
+   "Pick a topic (yesterday's news, a hobby, anything) and speak on it for 2 minutes, phone recording, deliberately slow.",
+   "Play it back. Note only clarity issues: slurred words, dropped consonants, rushed syllables — ignore everything else.",
+   "Re-record the same 2 minutes at a slower pace, over-articulating every word until each one is fully formed.",
+   "Finish with 5 minutes of slow diaphragmatic breathing: hand on stomach, inhale 4s expanding belly, exhale 6s."]},
+ {focus:"Resonance & Clear Articulation", steps:[
+   "Hum at a comfortable low pitch for 30s, feeling vibration in your chest, not your nose/throat.",
+   "Say 'mmm-hmmm' dropping pitch each time, 10 reps, keeping each syllable fully sounded.",
+   "Read one paragraph aloud slowly, deliberately opening your mouth wider than feels natural for every word.",
+   "Practice your assigned tongue twister 10x, slow to fast, prioritising clean articulation over speed — stop increasing speed the moment clarity slips."]},
+ {focus:"Slow Speech Practice", steps:[
+   "Read a paragraph aloud at half your normal speed, pausing fully between each word.",
+   "Read the same paragraph again slightly faster, but only as fast as you can go while keeping every word fully articulated.",
+   "Time yourself explaining a simple process (e.g. making tea) at a deliberately slow, unhurried pace — no rushing, no filler.",
+   "Practice today's tongue twister slow → slow-fast, 10 reps, never letting speed win over clarity."]},
+ {focus:"Consonant & Diction Precision", steps:[
+   "Pick 5 consonant sounds you tend to soften (e.g. t, d, k, g, s) and read a paragraph exaggerating each one crisply.",
+   "Say the sentence 'I never said she stole my money' seven times, slowly, articulating every consonant fully — notice how meaning shifts with emphasis.",
+   "Read a short paragraph aloud at slow, deliberate pace, marking 3 words to over-articulate before you start.",
+   "Finish with 5 minutes of slow breathing to reset your jaw and tongue."]},
+ {focus:"Mouth, Jaw & Tongue Mobility", steps:[
+   "Do 1 minute of jaw loosening: open wide, move side to side, gentle circular stretches.",
+   "Run through the vowel sounds (ah, ee, oh, oo) slowly and exaggeratedly, 5 reps each, feeling the full shape of your mouth.",
+   "Read a paragraph aloud slowly with an exaggerated, 'over-actor' level of mouth movement on every word.",
+   "Practice today's tongue twister 10x, staying slow enough that every consonant stays sharp."]},
+ {focus:"Vowel Clarity Drills", steps:[
+   "Pick a paragraph and read it slowly, holding each vowel sound slightly longer than normal.",
+   "Read the same paragraph again at a natural slow pace, keeping the same crisp vowel clarity.",
+   "Record 60 seconds explaining something simple, focused purely on clean, unhurried articulation — no need to sound interesting yet.",
+   "Cool down: 5 minutes slow breathing + posture reset (shoulders back, chin level)."]},
+ {focus:"Weekly Clarity Review", steps:[
+   "Stand tall, shoulders back, and read a paragraph aloud slowly, prioritising clarity over any performance quality.",
+   "Record yourself giving a slow, deliberate 3-minute summary of your day, focused only on speaking each word clearly.",
+   "Play it back once, silently, listening only for articulation — which sounds still get swallowed or rushed?",
+   "Write down one specific articulation issue to keep working on next week."]}
+];
+
+var VOICE_PUBLIC = [
+ {focus:"Recorded Weekly Update", steps:[
+   "Record yourself giving a 2-minute 'weekly update' on your own progress, as if presenting to an audience.",
+   "Play it back. Note: pace, filler words ('um', 'like'), pitch, eye contact with the camera, breath control.",
+   "Re-record the same update, deliberately fixing the single biggest issue you heard.",
+   "Finish with 5 minutes of slow diaphragmatic breathing: hand on stomach, inhale 4s expanding belly, exhale 6s."]},
+ {focus:"Pitch & Emphasis for an Audience", steps:[
+   "Say the sentence 'I never said she stole my money' seven times, stressing a different word each time — notice how meaning shifts.",
+   "Read a short paragraph aloud, marking 3 words to emphasise before you start, then deliver it standing tall as if to a room.",
+   "Practice a 60-second 'elevator pitch' about yourself, varying pitch deliberately rather than staying flat.",
+   "Finish with 5 minutes of slow breathing to reset."]},
+ {focus:"Pace Control Under Pressure", steps:[
+   "Read a paragraph aloud at a confident, audience-ready pace, keeping crisp articulation from your clarity training.",
+   "Time yourself explaining a simple process (e.g. making tea) to an imagined audience — deliberate, unhurried pacing, no rush-filler.",
+   "Practice today's tongue twister slow → fast, 10 reps, as a warm-up for tonight's speaking.",
+   "Stand and deliver a 90-second impromptu explanation of a topic you know well, timing yourself."]},
+ {focus:"Storytelling for a Room", steps:[
+   "Pick a real memory and tell it aloud in under 3 minutes with a clear beginning, middle, and end, as if to an audience.",
+   "Re-tell it, adding a deliberate pause before the key moment for effect.",
+   "Record both versions and compare — which pulls the listener in more?",
+   "Practice today's tongue twister 10x."]},
+ {focus:"Impromptu Speaking (Table Topics)", steps:[
+   "Write 5 random one-word topics on paper (e.g. 'bridges', 'coffee', 'patience'), fold them, pick one blind.",
+   "Speak on it for 60 seconds with zero preparation — structure on the fly: point, reason, example, point.",
+   "Repeat with a second topic, aiming for fewer filler words than the first attempt.",
+   "Cool down: 5 minutes slow breathing + posture reset (shoulders back, chin level)."]},
+ {focus:"Persuasive Structure & Delivery", steps:[
+   "Pick a simple opinion (e.g. 'mornings are better than evenings') and give a 90-second persuasive case for it.",
+   "Structure it: claim, 2 reasons, 1 example, restate the claim — say it aloud, timing yourself.",
+   "Re-deliver it standing in a confident stance, projecting as if to the back of a room.",
+   "Record it once and note one thing that would make it more convincing."]},
+ {focus:"Full Review & Power Posture", steps:[
+   "Stand in a 'power pose' (hands on hips or arms raised, chest open) for 2 minutes before speaking — this primes confident delivery.",
+   "Record yourself giving a 3-minute 'weekly update' on your own progress this week, as a public talk.",
+   "Play it back once, silently, just observing body language and voice with no self-judgement.",
+   "Write down one specific thing to carry into next week's voice practice."]}
+];
+
+/* ============ BODY / PHYSIQUE (8:00-9:00pm, by weekday) — base numbers scale by phase ============ */
+/* TIMED EXERCISES NOW PROGRESS (they used to stay fixed). For any exercise with a duration d:
+     duration = d × (phase intensity multiplier)  +  inc × (times you have COMPLETED this exercise)
+   capped at dmax, and recovery weeks take 15% off the total.
+     dmax = longest the exercise is allowed to get (past it, make it harder instead — see "Level progression")
+     inc  = seconds (minutes if unit is "min") earned for every completed session
+   An exercise with no dmax is a fixed-length block (warm-up, cooldown, stretching, easy walk) and never grows.
+   "Completed" = the Body task was ticked on a day when that exercise was scheduled. */
+var WORKOUT = [
+ {title:"Active Recovery", ex:[
+   {n:"Full-body stretch flow", s:1, r:0, d:20, unit:"min", how:"Hamstrings, quads, hip flexors, shoulders, neck — 30s hold each side, breathe slow throughout."},
+   {n:"Easy walk", s:1, r:0, d:20, unit:"min", how:"Outdoors only if the air is clear (on a foggy or smoky morning walk indoors or on the terrace); conversational pace — this is recovery, not training."}
+ ]},
+ {title:"Pull (Back / Biceps)", ex:[
+   {n:"Superman Hold", s:3, r:0, d:20, dmax:60, inc:1, unit:"sec", how:"Lie face down, lift arms/chest/legs off the floor simultaneously, squeeze glutes and back, hold."},
+   {n:"Towel/Band Bent-Over Rows", s:3, r:10, unit:"reps", how:"Hinge at hips, flat back, pull a towel looped under your feet (or a band) up to your ribs, squeeze shoulder blades."},
+   {n:"Doorframe Rows", s:3, r:12, unit:"reps", how:"Hold a sturdy doorframe, lean back with straight arms, pull your chest to the frame using your back, not arms."},
+   {n:"Reverse Snow Angels (floor)", s:3, r:12, unit:"reps", how:"Lie face down, arms at sides, sweep arms overhead like a snow angel while lifting chest slightly, squeezing back muscles."},
+   {n:"Pull-up negatives (bar) or inverted table rows", s:3, r:3, unit:"reps", how:"With a bar: jump or step to the top, lower yourself for 5 slow seconds, reset. No bar yet: lie under a heavy, stable table, grip the edge and pull your chest up (make sure it cannot tip). Get a doorway or wall-mounted bar this month; it is your road to real pull-ups."}
+ ]},
+ {title:"Push (Chest / Shoulders / Triceps)", ex:[
+   {n:"Push-ups (knee/incline early on)", s:3, r:8, unit:"reps", how:"Hands slightly wider than shoulders, body in a straight line, lower chest to just above the floor, push back up fully."},
+   {n:"Pike Push-ups", s:3, r:6, unit:"reps", how:"Hips high (inverted V), lower the crown of your head toward the floor bending elbows, push back up — targets shoulders."},
+   {n:"Chair Tricep Dips", s:3, r:8, unit:"reps", how:"Hands on chair edge behind you, legs extended, lower body by bending elbows to ~90°, press back up."},
+   {n:"Plank Shoulder Taps", s:3, r:20, unit:"reps", how:"In a push-up plank, tap opposite shoulder with each hand alternately, hips as still as possible."}
+ ]},
+ {title:"Legs & Core", ex:[
+   {n:"Bodyweight Squats", s:3, r:12, unit:"reps", how:"Feet shoulder-width, sit hips back and down like sitting in a chair, chest up, knees tracking over toes, drive up through heels."},
+   {n:"Glute Bridges", s:3, r:15, unit:"reps", how:"Lie on back, knees bent, feet flat — drive hips up squeezing glutes at the top, lower with control."},
+   {n:"Walking Lunges", s:3, r:10, unit:"per leg", how:"Step forward into a lunge until both knees ~90°, push through front heel to step into the next lunge."},
+   {n:"Plank Hold", s:3, r:0, d:30, dmax:120, inc:1, unit:"sec", how:"Forearms and toes on floor, straight line from head to heels, core braced, don't let hips sag."},
+   {n:"Bicycle Crunches", s:3, r:20, unit:"reps", how:"Lying on back, hands behind head, bring opposite elbow to opposite knee in a slow pedalling motion."},
+   {n:"Single-leg calf raises", s:3, r:15, unit:"per leg", how:"Stand on one foot on a step edge, rise slowly to full height, lower for 3 seconds. Hold a wall for balance."}
+ ]},
+ {title:"Conditioning / Cardio + Mobility", ex:[
+   {n:"Warm-up (arm circles, leg swings, bodyweight squats)", s:1, r:0, d:5, unit:"min", how:"Light, dynamic movement to raise heart rate before the circuit."},
+   {n:"HIIT Circuit — Jumping Jacks", s:4, r:0, d:40, dmax:50, inc:1, unit:"sec work / 20s rest", how:"Full-effort jacks; land soft on the balls of your feet."},
+   {n:"HIIT Circuit — High Knees", s:4, r:0, d:40, dmax:50, inc:1, unit:"sec work / 20s rest", how:"Drive knees to hip height rapidly, stay light on your feet, pump arms."},
+   {n:"HIIT Circuit — Mountain Climbers", s:4, r:0, d:40, dmax:50, inc:1, unit:"sec work / 20s rest", how:"In plank position, drive knees alternately to chest quickly, hips low and stable."},
+   {n:"HIIT Circuit — Squat Jumps", s:4, r:0, d:40, dmax:50, inc:1, unit:"sec work / 20s rest", how:"Squat down then explode upward, land softly back into the squat — sub with regular squats if joints protest."},
+   {n:"Cooldown stretch", s:1, r:0, d:10, unit:"min", how:"Slow static stretches for quads, calves, chest — hold each 30s, breathe deeply."}
+ ]},
+ {title:"Full Body Strength", ex:[
+   {n:"Push-ups", s:3, r:10, unit:"reps", how:"Same form as Push day — chest to just above floor, straight body line."},
+   {n:"Bodyweight Squats", s:3, r:15, unit:"reps", how:"Controlled tempo, full depth, drive through heels."},
+   {n:"Towel/Band Rows", s:3, r:10, unit:"reps", how:"Flat back hinge, pull to ribs, squeeze shoulder blades together."},
+   {n:"Plank Hold", s:3, r:0, d:40, dmax:120, inc:1, unit:"sec", how:"Braced core, straight line head-to-heels, breathe — don't hold your breath."}
+ ]},
+ {title:"Core + Mobility", ex:[
+   {n:"Dead Bug", s:3, r:10, unit:"per side", how:"Lie on back, arms up, knees bent 90° — slowly extend opposite arm and leg toward the floor without your lower back arching, return, switch."},
+   {n:"Side Plank", s:3, r:0, d:20, dmax:75, inc:1, unit:"sec / side", how:"Forearm on floor, body in a straight diagonal line, hips lifted and stacked, don't let them sag."},
+   {n:"Wall Sit", s:3, r:0, d:30, dmax:120, inc:1, unit:"sec", how:"Back flat against a wall, knees at ~90°, thighs parallel to floor, hold."},
+   {n:"Cat-Cow + Hip Flexor Stretch Flow", s:1, r:0, d:10, unit:"min", how:"Alternate arching and rounding the spine on all fours (cat-cow), then a kneeling hip flexor stretch each side, 30s."},
+   {n:"Brisk Walk", s:1, r:0, d:20, dmax:35, inc:0.25, unit:"min", how:"Faster than conversational pace, arms swinging, upright posture."}
+ ]}
+];
+
+/* ============ JOURNAL PROMPTS (by phase index 0-4, by weekday 0-6) ============ */
+var JOURNAL = [
+ // Phase 0 - Foundation
+ ["What does 'starting' actually feel like today — be honest, not motivational.",
+  "Name one thing you avoided speaking up about this week, and why.",
+  "Where in your body did you feel tension today? What might it be telling you?",
+  "What's the smallest version of 'discipline' you can commit to tomorrow, no excuses?",
+  "Who do you sound like when you talk — and who do you want to sound like?",
+  "What did your body do today that it couldn't do a week ago, even slightly?",
+  "Write one sentence describing this week in total honesty. Then one sentence about what you'll change."],
+ // Phase 1 - Build
+ ["What habit from week 1-3 is now automatic — and what's still a fight?",
+  "Describe a moment this week you spoke and immediately wished you hadn't. What triggered it?",
+  "What physical task felt easier this week than it did when you began? Be specific.",
+  "Where are you cutting corners without admitting it to yourself?",
+  "What's one thing people have noticed changing about you, if anything?",
+  "Rate your consistency this week 1-10 and write the real reason for that number, not the excuse.",
+  "What are you building toward, specifically — not vaguely 'self-improvement', but what exact outcome?"],
+ // Phase 2 - Ignite
+ ["What's the hardest part of the day now, and has that changed from a month ago?",
+  "Recall one conversation this week where your voice/delivery actually landed. What did you do differently?",
+  "What excuse did you almost use today, and what did you do instead?",
+  "Where is your body showing visible change? Where isn't it, and does that matter?",
+  "What does 'confidence' feel like in your chest right now, physically?",
+  "If someone watched your whole week on video, what would embarrass you? Fix that this week.",
+  "Write about the version of you that existed on 1 December. Would he recognise this week?"],
+ // Phase 3 - Forge
+ ["What are you doing now without needing motivation — just because it's who you are?",
+  "Describe the last time you spoke publicly or in a group. What's different about how you carried yourself?",
+  "What's a limit (physical or mental) you pushed past this week that used to stop you?",
+  "Where do you still perform discipline for others vs. actually holding it alone, unseen?",
+  "What would the final version of this Winter Arc need from you these next 5 weeks?",
+  "What's the story you'll tell about this winter, a year from now?",
+  "Write to yourself in January, from today — what does he need to hear?"],
+ // Phase 4 - Temper
+ ["You're in the final stretch. What's actually changed — not the goal, the person?",
+  "Speak your own \"weekly update\" out loud before writing — then write what surprised you hearing it.",
+  "What will you keep doing from here on, no matter what?",
+  "Where did you nearly quit this winter, and what kept you going?",
+  "What does your voice sound like now, compared to Day 1 (1 December)?",
+  "What's the next arc — what comes after this one ends?",
+  "Write a letter: to the person who started this on 1 December, from the one still going."]
+];
+
+/* ============ NEVER-ENDING UPGRADES ============ */
+var MANTRAS=["Slow is smooth. Smooth is powerful.","A calm voice commands the room.","Show up, even when it is boring.","Breathe low. Speak low. Think clear.","You rise to the level of your training.","Silence is also a sentence.","Discipline is a promise kept to yourself.","Strong body, steady voice, quiet mind."];
+var BOLD=["Ask a stranger or shopkeeper a question with steady eye contact and no filler words.","Record a 60-second talk on any topic. Replace every “umm” with a silent pause.","Share your opinion first in a conversation, slowly and clearly.","Hold eye contact 3 seconds longer than feels comfortable.","Ask one prepared question in class, a meeting or a group.","Give someone a specific, sincere compliment, spoken slowly.","Tell a 2-minute story: situation, struggle, solution.","Stand tall for 2 minutes before you speak: feet grounded, chest open.","Ask for something you want, politely and clearly, once today.","Call someone instead of texting.","Teach a concept to someone in 3 minutes.","Deliver a 30-second self-introduction in the mirror, then to a person.","Volunteer to lead, present or introduce something.","Speak 20% slower than usual for a full conversation."];
+function voiceLab(pl){
+  var w=pl.w, wpm=Math.min(130,105+Math.floor(w/2)), ex=Math.min(40,10+w);
+  var st=["<b>Posture reset (30 s):</b> ribs over hips, shoulders down and back, chin level, tongue resting on the roof of the mouth.","<b>Low belly breath (2 min):</b> inhale 4 s through the nose so belly and lower ribs widen, then exhale on a soft steady “sss” for "+ex+" s. Longer exhales give calmer, slower speech.","<b>Siren glides (1 min):</b> on “ng” or “oo”, glide softly from a comfortable low note up and back down. Stay easy, never strain.","<b>Chest hum (2 min):</b> hand on breastbone, hum “mmm” and feel the buzz, then open to “maa-maa-maa” keeping the same buzz. 8 rounds.","<b>Downward endings (1 min):</b> read 10 sentences aloud and let the pitch settle down on the last word. It signals calm authority.","<b>Easy-onset starts (1 min):</b> begin each of 10 sentences on a soft breath of air, like a gentle “hh” before the first word. It releases the throat when a word feels stuck.","<b>Slow-speech reps (3 min):</b> read at about "+wpm+" words a minute (a word every half second), pausing 1 s at each full stop and 2 s between paragraphs.","<b>Pause-and-chunk (1 min):</b> speak in phrases of 4 to 6 words and breathe silently between them. Never push a sentence out on the last of your air. Swap every filler word for a breath."];
+  return '<div class="videobox" style="margin-bottom:10px"><b>🎙 Deep Voice &amp; Slow Speech Lab (about 12 min)</b><ol style="margin:8px 0 0">'+st.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol><div class="small" style="margin-top:6px">A deeper voice comes from relaxed resonance and breath support, not from squeezing the throat. If a word gets stuck, pause, let the breath out softly and restart on an easy onset; never force it or swap the word to avoid it. If you feel pain or hoarseness, stop, drink water and rest.</div></div>';
+}
+function bodyWarm(pl){
+  return '<div class="videobox" style="margin-bottom:8px"><b>⏱ 1-hour block</b><div class="small" style="margin-top:4px">0–10 warm-up · 10–45 main workout · 45–50 finisher · 50–60 cooldown. Timed holds lengthen as you improve and complete sessions; if a high-level day runs a little long, trim the rest between sets.</div></div><div class="small" style="margin-bottom:8px"><b>Effort rules:</b> lower for 3 seconds, no bouncing · rest 60–90 s · end each set with 1–2 clean reps left, and the last set with 1 left · when you hit the top reps on every set in two sessions, move to the next variation in your ladder.</div><div class="videobox" style="margin-bottom:8px"><b>🔥 Warm-up · 10 min</b><div class="small" style="margin-top:4px">2 rounds: 40 jumping jacks · 10 arm circles each way · 10 hip circles each side · 10 bodyweight squats · 10 glute bridges · 10 wall angels · 10 chin tucks · 5 cat-cow. Start your first set light.</div></div>'+'<div class="small" style="margin-bottom:8px">❄ Home safety: use a mat, wear socks or shoes on cold tile, never jump on bare marble or tile (take the low-impact option), and warm the room or wear a layer for the warm-up.</div>'+(pl.deload?'<div class="small" style="margin-bottom:8px">♻ Recovery week: intensity is cut to 85%. Keep form perfect and let your body rebuild.</div>':'');
+}
+/* Finisher holds (3 sets each). Same rule as WORKOUT: d = starting seconds, dmax = cap, inc = seconds earned per completed session. */
+var FIN=[
+ {n:"Dead hang (no bar: hollow-body hold)",d:30,dmax:90,inc:1},
+ {n:"Hollow-body hold",d:20,dmax:60,inc:1},
+ {n:"Side plank (each side)",d:30,dmax:75,inc:1},
+ {n:"Wall sit",d:40,dmax:120,inc:1},
+ {n:"Superman hold",d:25,dmax:60,inc:1},
+ {n:"Forearm plank",d:45,dmax:120,inc:1},
+ {n:"Backpack carry (heavy bag, tall posture)",d:60,dmax:120,inc:1}
+];
+var PROG=["Level 1 · Learn clean form: knee or incline push-ups, full-depth squats, a steady 45 s plank. This month get a doorway or wall-mounted pull-up bar and a resistance band; until then use inverted rows under a sturdy table. End-of-level target: 15 push-ups.","Level 2 · Full push-ups with a 3 s lowering. Start 5 s pull-up negatives. Target: 20 full push-ups, 90 s plank.","Level 3 · Add decline and pause push-ups and a 3 s pause at the bottom of every squat. Chase your first strict pull-up. Target: 30 push-ups, 1 pull-up.","Level 4 · Add diamond and archer push-ups, loaded backpack squats and slow pull-up negatives. Target: 35 push-ups, 3 pull-ups.","Level 5 · Add assisted pistol squats, backpack rows and L-sit tucks. Target: 45 push-ups, 5 pull-ups.","Level 6 · Add explosive and hand-release push-ups and weighted pull-ups with a backpack. Target: 50+ push-ups, 8 pull-ups.","Level 7+ · Peak phase: pick one skill goal (muscle-up, handstand push-up, pistol squat or 15 pull-ups) and train it first in every session. Keep a 3 s tempo on everything."];
+function bodyFinish(pl, earned){
+  var f=FIN[pl.wd], secs=progressDur(f.d,f.dmax,f.inc,pl,'fin:'+f.n,earned), hint=growHint(f.d,secs,f.dmax,'s');
+  return '<div class="videobox" style="margin-top:8px"><b>🧱 Finisher: '+f.n+'</b><div class="small" style="margin-top:4px">3 × '+secs+' s · rest 45 s'+(hint?' <span class="exup">'+hint+'</span>':'')+'</div></div><div class="small" style="margin-top:8px"><b>Your ladder:</b> '+PROG[Math.min(pl.lvl-1,PROG.length-1)]+'</div><div class="small" style="margin-top:6px"><b>Fuel &amp; recovery:</b> protein at every meal, 2.5–3 L water, 7–8 h sleep. Muscle is built while you rest.</div>'+(pl.wd===4?'':'<div class="videobox" style="margin-top:8px"><b>🧊 Cooldown · 10 min</b><div class="small" style="margin-top:4px">Child pose 60 s · hip-flexor lunge stretch 45 s per side · hamstring fold 45 s per side · doorway chest stretch 45 s · neck side-tilt 30 s per side. Breathe in 4 s, out 6 s.</div></div>');
+}
+
+var MIND=[
+{n:"Memory Palace",b:"Builds spatial memory and vivid imagery, the method memory champions use.",st:["Pick a familiar route with 10 fixed spots (door, shoe rack, sofa, bed…).","Take a list of 10 items. Place each at a spot as a huge, absurd, noisy image.","Eyes closed, walk the route in order and see each image.","Recall all 10 forward, then backward. Open your eyes and check."]},
+{n:"Digit Span Ladder",b:"Strengthens working memory, the mental notepad that holds your thoughts.",st:["Look at any phone number or plate for 5 seconds, close your eyes, repeat it forward, then backward.","Start at 5 digits. After 3 clean tries in a row, add one digit.","Chunk digits in threes and picture each chunk as a shape or place."]},
+{n:"Focus Grid (Schulte table)",b:"Trains sustained attention and speed of focus.",st:["Tap Start Focus Grid below and find 1 to 25 in order.","Keep your eyes on the centre and use your side vision.","Accuracy first, speed second. Do 3 rounds and beat your best time."]},
+{n:"Reverse Recall",b:"Sharpens memory consolidation and mental flexibility.",st:["Recall yesterday in detail, in reverse, from bedtime back to waking.","Add senses: what you saw, heard and felt at each moment.","Then replay your last conversation as close to word for word as you can."]},
+{n:"Single-Point Focus",b:"Builds the ability to hold attention on one thing without drifting.",st:["Place a dot or candle flame at eye level, one metre away.","Gaze softly. When a thought pulls you away, return to the dot. Each return is one rep.","Aim for fewer drifts than yesterday."]},
+{n:"Serial Sevens",b:"Exercises concentration and working memory under mild mental load.",st:["Count backward from 500 by 7s (500, 493, 486…) silently or aloud.","If you slip, restart calmly without judging yourself.","Then do 17 × 6 and 23 × 8 style sums fully in your head."]},
+{n:"Story Chain",b:"Links memory with imagination by turning lists into stories.",st:["Pick 12 objects you can see around you.","Link them into one continuous, funny story where each object triggers the next.","Retell the story, then recite the 12 objects in order, then backward."]}];
+var MINDT=[function(L){return 'place '+Math.min(30,10+3*(L-1))+' items, recalled forward and backward.';},function(L){return 'start at '+Math.min(12,4+L)+' digits, forward then backward.';},function(L){return 'beat your best; aim for under '+Math.max(20,55-4*L)+' s per grid.';},function(L){return 'recall the last '+(L<3?'24':L<5?'48':'72')+' hours in reverse, with senses.';},function(L){return 'hold '+Math.min(15,4+L)+' min with no more than '+Math.max(1,10-L)+' drifts.';},function(L){return 'count down from '+(L<3?'500':'1000')+', one number every '+(L<4?'3':'2')+' s.';},function(L){return 'link '+Math.min(30,12+3*(L-1))+' objects, recalled forward and backward.';}];
+function mindGym(pl){
+  var m=MIND[pl.wd];
+  return '<div class="videobox" style="margin-top:10px"><b>🧠 Mind Gym · 15 min · '+m.n+'</b><div class="small" style="margin:4px 0 6px">'+m.b+'</div><div class="small" style="margin:0 0 6px"><b>Level '+pl.lvl+' target:</b> '+MINDT[pl.wd](pl.lvl)+'</div><ol style="margin:0">'+m.st.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>'+(pl.wd===2?'<button class="act" id="gridStart" style="margin-top:8px">Start Focus Grid</button><div id="gridBox"></div>':'')+'</div><div class="videobox" style="margin-top:10px"><b>🌙 Stillness &amp; recall · 10 min</b><div class="small" style="margin-top:4px">5 min of silent stillness, eyes closed. Then 5 min, without notes: recall today\u2019s three goals and one thing you learned yesterday, and set your intention for the day.</div></div>';
+}
+function medPlan(){ return '<div class="videobox" style="margin-bottom:10px"><b>⏱ Exactly 1 hour, every day</b><div class="small" style="margin-top:4px">0–5 settle: feet on the floor, posture, 3 slow breaths, say your 3 non-negotiables for today aloud · 5–35 main practice (30 min) · 35–50 Mind Gym, focus and memory (15 min) · 50–60 stillness and recall (10 min)</div><div class="small" style="margin-top:6px"><b>Wake-up protocol:</b> alarm across the room · feet on the floor within 10 seconds, no negotiating · 500 ml water · cold water on the face · no scrolling until this block ends.</div></div>'; }
+function gridGame(el){
+  var a=[],i,nxt=1,t0=0;
+  for(i=1;i<=25;i++)a.push(i);
+  a.sort(function(){return Math.random()-0.5;});
+  el.innerHTML='<div class="sgrid">'+a.map(function(n){return '<button data-n="'+n+'">'+n+'</button>';}).join('')+'</div><div class="small" id="gmsg" style="margin-top:6px">Find 1 to 25 in order. Eyes on the centre.</div>';
+  el.onclick=function(e){
+    var n=+e.target.getAttribute('data-n'); if(!n) return;
+    if(n===1&&nxt===1) t0=Date.now();
+    if(n===nxt){ e.target.className='ok'; nxt++; if(nxt>25) document.getElementById('gmsg').textContent='Done in '+((Date.now()-t0)/1000).toFixed(1)+' s. Beat it next round!'; }
+  };
+}
+function voicePlan(){ return '<div class="videobox" style="margin-bottom:10px"><b>⏱ Exactly 1 hour, every day</b><div class="small" style="margin-top:4px">0–12 Voice Lab · 12–43 today\u2019s focus drills · 43–45 pace check (read 130 words, aim for 60–65 s) · 45–52 deep-voice hum drill · 52–60 evening tongue twister, then record and review</div></div>'; }
+/* ============ DATE / PROGRAM HELPERS ============ */
+function dayIndex(d){ return Math.round((stripTime(d)-START)/86400000); } // 0-based
+function stripTime(d){ return new Date(d.getFullYear(),d.getMonth(),d.getDate()); }
+function inProgram(d){ return dayIndex(d)>=0; }
+function weekNumber(i){ return Math.floor(i/7)+1; }
+function fmtDate(d){ return d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
+function fmtShort(d){ return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); }
+
+function dayPlan(d){
+  var i = dayIndex(d);
+  var w = weekNumber(i);
+  var wd = d.getDay(); // 0=Sun..6=Sat
+  var ph = phaseForWeek(w);
+  var deload = (w%4===0);
+  if(w<=2){ ph={p:Object.assign({},ph.p,{name:ph.p.name+' · Ramp-in '+w,mult:(w===1?0.6:0.8)}),idx:ph.idx}; }
+  if(deload){ ph={p:Object.assign({},ph.p,{name:ph.p.name+' · Deload',mult:+(ph.p.mult*0.85).toFixed(2),baseMult:ph.p.mult}),idx:ph.idx}; }
+  var med = MED[wd];
+  var vid = VIDEOS[wd];
+  var twister = TWISTERS[i % TWISTERS.length];
+  var eveningTwister = EVENING_TWISTERS[wd];
+  var voice = (((w-1)%4)<2) ? VOICE_CLARITY[wd] : VOICE_PUBLIC[wd];
+  var workout = WORKOUT[wd];
+  var jprompt = (w>22 ? MJ[(wd+w)%MJ.length] : JOURNAL[ph.idx][wd]);
+  return {deload:deload,lvl:level(w),i:i,w:w,wd:wd,phase:ph.p,phaseIdx:ph.idx,med:med,vid:vid,twister:twister,eveningTwister:eveningTwister,voice:voice,workout:workout,jprompt:jprompt};
+}
+/* How many times you have COMPLETED each timed exercise, counted only on days BEFORE `asOf` and never beyond today.
+   Derived from the existing check-offs (DONE) so no new storage is needed and old backups keep working. */
+function earnedCounts(asOf){
+  var cut = Math.min(dayIndex(asOf), dayIndex(nowIST())+1), c = {};
+  Object.keys(DONE).forEach(function(k){
+    var i = parseInt(k,10), o = DONE[k];
+    if(!(i>=0 && i<cut) || !o || !o.body) return;
+    var wd = new Date(START.getFullYear(), START.getMonth(), START.getDate()+i).getDay();
+    WORKOUT[wd].ex.forEach(function(e){ if(e.dmax) c[e.n]=(c[e.n]||0)+1; });
+    var f = FIN[wd]; c['fin:'+f.n]=(c['fin:'+f.n]||0)+1;
+  });
+  return c;
+}
+/* Today's length of a timed exercise: grows with the phase multiplier AND with completed sessions, capped, recovery week = 85%. */
+function progressDur(base, dmax, inc, pl, key, earned){
+  if(!dmax) return base;                                  // fixed-length block: never grows
+  var m = pl.phase.baseMult || pl.phase.mult;             // full-strength multiplier (before any recovery-week cut)
+  var d = Math.min(dmax, base*m + (inc||0)*((earned && earned[key])||0));
+  if(pl.deload) d *= 0.85;
+  return Math.max(1, Math.round(d));
+}
+/* Small "▲ +12 s" progress label (empty when nothing has grown yet). */
+function growHint(base, cur, dmax, u){
+  if(!dmax || cur<=base) return '';
+  return '▲ +'+(cur-base)+' '+u+(cur>=dmax?' · max':'');
+}
+function scaledEx(ex, pl, earned){
+  var phase = pl.phase, mult = phase.mult, addSets = phase.sets;
+  var s = ex.s + (ex.s>0?addSets:0);
+  var r = ex.r ? Math.round(ex.r*mult) : 0;
+  var d = ex.d ? progressDur(ex.d, ex.dmax, ex.inc, pl, ex.n, earned) : 0;
+  return {s:s,r:r,d:d};
+}
+function exQtyStr(ex, pl, earned){
+  var v = scaledEx(ex, pl, earned), out = "";
+  if(ex.d && ex.r===0){
+    if(ex.unit.indexOf('work')>=0) out = v.s+" rounds × "+v.d+"s work / 20s rest";
+    else if(ex.s>1) out = v.s+" × "+v.d+' '+ex.unit;
+    else out = v.d+" "+ex.unit;
+    var hint = growHint(ex.d, v.d, ex.dmax, ex.unit.indexOf('min')===0?'min':'s');
+    if(hint) out += '<div class="exup">'+hint+'</div>';
+  } else if(ex.r && ex.s>0) out = v.s+" × "+v.r+" "+ex.unit;
+  return out;
+}
+
+/* ============ STORAGE ============ */
+function loadDone(){ try{ return JSON.parse(localStorage.getItem('wa2_done')||'{}'); }catch(e){ return {}; } }
+function saveDone(o){ try{ localStorage.setItem('wa2_done', JSON.stringify(o)); }catch(e){} }
+var DONE = loadDone();
+function keyFor(d){ return dayIndex(d)+""; }
+var TASK_IDS = ['med','comm','voice','body','night'];
+var TEST_FIELDS=[['weight','Weight (kg)','kg'],['waist','Waist (cm)','waist'],['pushups','Max clean push-ups','push'],['plank','Plank (s)','plank'],['wallsit','Wall sit (s)','wall'],['squats','Squats in 60 s','sq'],['fillers','Filler words in a 2-min talk','fill'],['grid','Focus Grid best (s)','grid'],['pullups','Max pull-ups (0 is fine)','pull'],['talk','Longest unscripted talk (min)','talk'],['still','Longest still sit (min)','sit'],['sss','Longest steady sss exhale (s)','sss'],['pace','Speaking pace, words/min (recorded talk)','wpm']];
+var GOOD={weight:0,waist:-1,pushups:1,plank:1,wallsit:1,squats:1,fillers:-1,grid:-1,pullups:1,talk:1,still:1,sss:1,pace:0};
+function verdict(T,lv){
+  var ks=Object.keys(T).map(Number).sort(function(a,b){return a-b;}), cur=T[lv], prev=null, h='', adv='';
+  if(!cur) return '';
+  ks.forEach(function(k){ if(k<lv) prev=k; });
+  function cmp(base,label){
+    var up=0,tot=0,parts=[];
+    TEST_FIELDS.forEach(function(f){ var a=T[base][f[0]], b=cur[f[0]]; if(a===undefined||b===undefined) return; var d=b-a, g=GOOD[f[0]]; if(g){ tot++; if(d*g>0) up++; } if(d) parts.push(f[2]+' '+(d>0?'+':'')+Math.round(d*10)/10); });
+    if(base===prev){ adv = !tot ? '' : (up*2<tot ? 'Fewer than half improved: repeat this level at full effort before moving on, and check sleep, protein and consistency.' : 'Good climb. Keep the same habits and push the next level.'); }
+    return '<div class="small" style="margin-top:6px"><b>'+label+':</b> '+(tot?up+' of '+tot+' measures improved':'no shared measures yet')+(parts.length?' · '+parts.join(', '):'')+'</div>';
+  }
+  if(prev!==null) h+=cmp(prev,'Vs Level '+prev);
+  if(ks[0]<lv && ks[0]!==prev) h+=cmp(ks[0],'Vs Level '+ks[0]+' (Day 1)');
+  return h?'<div class="card"><h3 style="margin-top:0">Level '+lv+' verdict</h3>'+h+(adv?'<div class="small" style="margin-top:8px">'+adv+'</div>':'')+'</div>':'';
+}
+var QUESTS=[{n:'Skill Month',t:'Body: train one skill first in every session (muscle-up, handstand or pistol). Voice: cut fillers in every recording to 3 or fewer. Mind: 40-minute still sit. Speak: teach one lesson to a real person each week.'},{n:'Stage Month',t:'Speak to a real group twice this month. Voice: a 10-minute talk with deliberate 3-second pauses. Body: add 10% load to your main lifts. Mind: Memory Palace with 30 items.'},{n:'Discipline Month',t:'Start every block within 5 minutes of its time for 28 days. Add one deliberate hard thing a day: cold water at the end of a shower, a longer stretch hold, or the worst task done first.'},{n:'Presence Month',t:'Steady eye contact and a calm pace in every conversation. Record one real conversation a week and review pace and pauses. Mind: 45-minute still sit. Body: every set strict, 3-second lowering.'},{n:'Strength Month',t:'Raise one number by 20%: push-ups, pull-ups or loaded squats. Retest on the last Sunday. Protein at every meal and 7.5 hours of sleep, because strength follows recovery.'},{n:'Leadership Month',t:'Lead a study group, meeting or session each week. Prepare 3 points, ask one question that moves the group forward, finish on time, and note what you would change.'}];
+function questBox(L){ var q=QUESTS[(L-7)%QUESTS.length]; return '<div class="card"><b>🏔 Mastery Quest '+(L-6)+' · '+q.n+'</b><div class="small" style="margin-top:6px">'+q.t+'</div></div>'; }
+function loadTests(){ try{ return JSON.parse(localStorage.getItem('wa2_tests')||'{}'); }catch(e){ return {}; } }
+var WL=null;
+function toggleWake(btn){
+  if(WL){ try{ WL.release(); }catch(e){} WL=null; btn.textContent='🔆 Keep screen awake: off'; return; }
+  if(!navigator.wakeLock){ btn.textContent='Keep-awake is not supported on this browser'; return; }
+  navigator.wakeLock.request('screen').then(function(l){ WL=l; l.addEventListener('release',function(){ WL=null; }); btn.textContent='🔆 Screen awake: on'; }).catch(function(){ btn.textContent='Could not keep the screen on'; });
+}
+var OPEN = {med:false,comm:false,voice:false,body:false,night:false}; // detail-panel expand state (session only)
+var TICK_SVG = '<svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#08110d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var viewDate = nowIST(); viewDate.setHours(0,0,0,0);
+if(!inProgram(viewDate)) viewDate = new Date(START);
+
+function isAllDone(d){ var o=DONE[keyFor(d)]||{}; return TASK_IDS.every(function(t){return o[t];}); }
+
+/* streak = consecutive fully-completed days ending at min(today, program end), perfect = total fully-completed days */
+function computeStats(){
+  var today = nowIST(); today.setHours(0,0,0,0);
+  var lastDay = today;
+  if(lastDay < START) lastDay = new Date(START.getTime()-86400000); // before program starts -> no days counted
+  var perfect = 0;
+  for(var d = new Date(START); d <= lastDay; d.setDate(d.getDate()+1)){ if(isAllDone(d)) perfect++; }
+  var streak = 0;
+  var sd=new Date(lastDay); if(!isAllDone(sd)) sd.setDate(sd.getDate()-1);
+  for(var d2 = sd; d2 >= START; d2.setDate(d2.getDate()-1)){ if(isAllDone(d2)) streak++; else break; }
+  var el=elapsed(); var pct = el ? Math.round(perfect/el*100) : 0;
+  return {streak:streak, perfect:perfect, pct:pct};
+}
+
+/* ============ RENDER: TODAY (checklist + expandable detail per task) ============ */
+function taskCard(cls, id, title, sub, detailHtml, doneObj){
+  var done = !!doneObj[id];
+  var open = OPEN[id];
+  return '<div class="task '+cls+(done?' done':'')+'" data-task="'+id+'">'
+    + '<div class="task-main" data-task="'+id+'"><div class="tickbox">'+TICK_SVG+'</div>'
+    + '<div class="task-txt"><div class="tt">'+title+'</div><div class="td">'+sub+'</div></div></div>'
+    + '<button class="info-btn" data-detail="'+id+'">'+(open?'Hide full guidance ▴':'Full guidance & details ▾')+'</button>'
+    + '<div class="detail'+(open?' open':'')+'" id="detail-'+id+'">'+detailHtml+'</div>'
+    + '</div>';
+}
+
+function renderToday(){
+  if(!inProgram(viewDate)){
+    document.getElementById('today').innerHTML = (function(){ var dl=-dayIndex(nowIST()); return '<div class="card"><h3 style="margin-top:0">Your arc begins in '+dl+' day'+(dl===1?'':'s')+' · 1 December 2026</h3><div class="small">Use the wait to arrive ready:</div><ol class="small" style="margin:8px 0 12px 18px"><li>Move your wake-up 15 minutes earlier every 3 days until you rise at 5:00 AM and sleep by 9:30 PM.</li><li>Open this app once online until it says offline ready, then test it in airplane mode.</li><li>Arrange your home setup: a mat, a water bottle, a notebook and a pull-up bar if you can.</li><li>Choose your 5:00 AM spot: a quiet corner, with the phone charging across the room.</li><li>Tell one person your goal and ask them to check on you every week.</li></ol><button class="act" id="gotoStart">Open Day 1</button></div>'; })(); document.getElementById('gotoStart').onclick=function(){viewDate=new Date(START);renderToday();};
+    return;
+  }
+  var target = viewDate;
+  var pl = dayPlan(target);
+  var doneObj = DONE[keyFor(target)] || {};
+  var doneCount = TASK_IDS.filter(function(t){return doneObj[t];}).length;
+  var stats = computeStats();
+
+  var html = '';
+
+  if(nowIST() < START){ var dl=Math.ceil((START-nowIST())/86400000); html += '<div class="card"><b>⏳ Your never-ending arc begins in '+dl+' day'+(dl===1?'':'s')+'</b><p class="small" style="margin:6px 0 0">1 December 2026 · Day 1 is previewed below.</p></div>'; }
+  // date navigation bar
+  html += '<div class="datebar sans"><button class="nav" id="prevDay">‹</button>'
+    + '<div class="dinfo"><div>'+target.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})+'</div>'
+    + '<div class="dnum">Day '+(pl.i+1)+' · Level '+pl.lvl+' · ∞</div>'
+    + '<button class="jump" id="jumpToday">Jump to today</button></div>'
+    + '<button class="nav" id="nextDay">›</button></div>';
+  if(sameDay(target,nowIST())) html += '<div class="nowbar sans" id="nowBar">'+nowNext()+'</div>';
+
+  // stats
+  html += '<div class="stats"><div class="stat"><div class="v">'+stats.streak+'</div><div class="l">day streak</div></div>'
+    + '<div class="stat"><div class="v">'+stats.perfect+'</div><div class="l">perfect days</div></div>'
+    + '<div class="stat"><div class="v">'+stats.pct+'%</div><div class="l">consistency</div></div></div>';
+
+  html += '<button class="act ghost" id="wakeBtn" style="width:100%;margin-bottom:14px">'+(WL?'🔆 Screen awake: on':'🔆 Keep screen awake: off')+'</button>';
+  // hero / phase context
+  html += '<div class="hero"><div class="day-of">WEEK '+pl.w+' · <span class="phaseLabel">'+pl.phase.name+'</span></div>';
+  html += '<h2>'+fmtDate(target)+'</h2>';
+  html += '<div class="meta">Intensity today: '+pl.phase.mult.toFixed(2)+'× baseline &nbsp;·&nbsp; '+doneCount+'/'+TASK_IDS.length+' tasks checked off'+(pl.deload?' · recovery week':'')+'</div><p class="desc" style="margin:10px 0 0"><i>“'+MANTRAS[pl.i%MANTRAS.length]+'”</i></p>';
+  html += '<div class="progressbar"><i style="width:'+(doneCount/TASK_IDS.length*100)+'%"></i></div></div>';
+  var whyT=''; try{ whyT=localStorage.getItem('wa2_why')||''; }catch(e){}
+  if(whyT) html += '<div class="card"><b>Your why</b><div class="small" style="margin-top:6px">'+whyT.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div></div>';
+  if(pl.lvl>=7) html += questBox(pl.lvl);
+  var blanks=0; for(var bi=1; bi<=7; bi++){ var bd=new Date(target); bd.setDate(bd.getDate()-bi); if(!inProgram(bd)) break; var bo=DONE[keyFor(bd)]||{}; if(TASK_IDS.some(function(t){return bo[t];})||bo.lite) break; blanks++; }
+  if(blanks>=2 && sameDay(target,nowIST())) html += '<div class="card" style="border-color:#7A1F2E"><b>⚠ Re-entry: '+blanks+' blank days</b><div class="small" style="margin-top:6px">Do not try to make up for it. Make today a Lite day, tick all five blocks, and run the full plan tomorrow. A comeback beats a perfect restart.</div></div>';
+  var py=new Date(target); py.setDate(py.getDate()-1); var po=DONE[keyFor(py)]||{};
+  if(blanks===1 && inProgram(py) && sameDay(target,nowIST()) && !TASK_IDS.some(function(t){return po[t];}) && !po.lite){ html += '<div class="card" style="border-color:#7A1F2E"><b>⚠ Never miss twice</b><div class="small" style="margin-top:6px">Yesterday was blank. One miss is an accident, two is a new habit. Start with the 5:00 AM meditation block now, and switch to a Lite day if you must.</div></div>'; }
+  var lite=!!doneObj.lite;
+  html += '<div class="card"><b>'+(lite?'🟡 Lite day active':'Rough day, exam day or travel?')+'</b><div class="small" style="margin-top:6px">'+(lite?'Minimum standard: meditate 15 min · speak aloud 15 min · voice lab 15 min · 10 min of push-ups, squats and a plank · lights out on time. Tick each task when its minimum is done; the streak stays alive. Never skip two days in a row.':'Never miss twice. On a bad day, exam day, travel day or festival day switch to Lite: 15 minutes per block still counts and keeps your streak alive. If you are ill (fever, dizziness, pain) rest fully and see a doctor if needed; do not train through it.')+'</div><button class="act ghost" id="liteBtn" style="margin-top:8px">'+(lite?'Back to full day':'Switch to Lite day')+'</button></div>';
+  if(pl.i===0){ html += '<div class="card"><b>📍 Day 1 baseline (do it today)</b><div class="small" style="margin-top:6px">Your later progress is only visible against this. 1) Record a 2-minute talk on any topic and save the file as “Day 1”. 2) Record yourself reading one paragraph at your natural voice. 3) Take front, side and back photos in the same light. 4) Fill the Level-Up Test in Progress. 5) Note your resting mood and energy in the journal. Repeat the talk recording on Days 30, 60, 90, 120, 150 and 180 and compare.</div></div>'; }
+
+  html += backupNudge(target);
+  // Task 1: Meditation
+  var medDetail = medPlan()+rampNote(pl)+'<p class="desc"><b style="color:var(--frost)">'+pl.med.name+'</b><br><span class="small">'+pl.med.type+'</span></p>'
+    + '<p class="desc">'+pl.phase.med+'</p>'
+    + '<p class="desc"><b style="color:var(--moss)">Builds concentration:</b> '+pl.med.builds+'</p>'
+    + '<ol>'+pl.med.steps.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ol>'+mindGym(pl);
+  html += taskCard('', 'med', 'Meditation & mental fitness', '5:00 – 6:00 AM · '+pl.med.name+' + Mind Gym', medDetail, doneObj);
+
+  // Task 2: Communication
+  var commDetail = '<div class="videobox"><b>Optional video (needs internet) · '+pl.vid.channel+'</b> — '+pl.vid.title+'<div class="small" style="margin-top:4px">'+pl.vid.note+'</div></div>'
+    + skillBox(pl) + '<ol style="margin-top:10px">'
+    + '<li><b>0–15 min:</b> Study today\u2019s skill lesson, then write its key idea in one sentence of your own. With internet you may watch the optional video; without it you lose nothing.</li>'
+    + '<li><b>15–30 min:</b> Record yourself: teach today\u2019s lesson in your own words, then speak for 2 minutes on today\u2019s topic: <i>\u201C'+TOPICS[pl.i%TOPICS.length]+'\u201D</i></li>'
+    + '<li><b>30–40 min:</b> Tongue twister drilling — slow and clean 5×, then at full speed 10×.</li>'
+    + '<li><b>40–50 min:</b> Read one page of any book aloud, slowly and clearly, focusing on crisp consonants.</li>'
+    + '<li><b>50–55 min:</b> Play back your recording once and note one thing to fix tomorrow.</li><li><b>55–60 min:</b> Learn today\u2019s 3 power words: '+wordsToday(pl)+'. Use each aloud 3 times today. Decide when and where you will do today\u2019s Boldness Rep.</li></ol>'
+    + '<div class="videobox" style="margin-top:10px"><b>🔥 Boldness rep of the day</b><div class="small" style="margin-top:4px">'+BOLD[pl.i%BOLD.length]+'</div></div>'
+    + '<div class="videobox" style="margin-top:10px"><b>🎯 Speaking toolkit</b><div class="small" style="margin-top:4px"><b>Structure:</b> Point, Reason, Example, Point. Give the answer in one sentence first, then the detail. <b>Pause</b> 2 seconds before you reply. Cut hedges such as just, sort of, maybe. <b>Listening rep:</b> before replying to someone today, repeat their point in one sentence. <b>Scorecard:</b> after each recording rate pace, pauses, fillers, clarity and confidence from 1 to 5, and fix the lowest one tomorrow.</div></div>'
+    + '<div class="twister">\u201C'+pl.twister+'\u201D</div>';
+  html += taskCard('b-comm', 'comm', 'English & communication skills', '6:00 – 7:00 AM · video + speaking drill', commDetail, doneObj);
+
+  // Task 3: Voice/Speech
+  var deepVoiceStep = '<li><b>Deep, masculine voice drill:</b> Relax the jaw and drop the chin very slightly (don\u2019t tuck it hard). Hum a low, comfortable \u201Cmmm\u201D for 30s, feeling the vibration in your chest and collarbone rather than your nose or throat. Then say \u201Cmmm-hmmm\u201D 10x, dropping pitch a little each time, stopping at the lowest note you can hold without straining or creaking (no vocal fry). Finish by reading tonight\u2019s tongue twister below slowly, at that same low, fully-supported chest pitch \u2014 resonant and grounded, not forced.</li>';
+  var voiceDetail = voicePlan()+voiceLab(pl)+'<p class="desc">'+pl.phase.voice+'</p><ol>'+pl.voice.steps.map(function(s){return '<li>'+s+'</li>';}).join('') + deepVoiceStep + '</ol>'
+    + '<div class="twister">\u201C'+pl.eveningTwister+'\u201D</div>';
+  html += taskCard('b-speech', 'voice', 'Speech clarity, voice & public speaking', '7:00 – 8:00 PM · '+pl.voice.focus, voiceDetail, doneObj);
+
+  // Task 4: Body
+  var earned = earnedCounts(target);
+  var bodyDetail = bodyWarm(pl)+pl.workout.ex.map(function(ex){
+    return '<div class="exline"><div class="nm">'+ex.n+'<div class="exnote">'+ex.how+'</div></div><div class="qty">'+exQtyStr(ex,pl,earned)+'</div></div>';
+  }).join('')+bodyFinish(pl,earned);
+  html += taskCard('b-body', 'body', 'Body & physique development', '8:00 – 9:00 PM · '+pl.workout.title, bodyDetail, doneObj);
+
+  var nightDetail='<div class="videobox"><b>⏱ 9:15 PM · 15 minutes</b><div class="small" style="margin-top:4px">9:15 write 3 wins and one fix · 9:18 set up tomorrow: clothes, water bottle, mat, alarm across the room · 9:22 slow breathing, in 4 s, hold 7 s, out 8 s, four times · 9:27 lights out. Phone on charge out of reach · write tomorrow\u2019s 3 goals · answer the journal prompt below · lights out by 9:30 PM so you get 7.5 h before the 5:00 AM start. If the body block runs long, trim rest between sets rather than sleep.</div></div><div class="small" style="margin-top:8px"><b>Daily standards:</b> 3 L water · protein at every meal (about 1.2–1.6 g per kg of body weight; Indian food ideas are in the Guide) · 8,000 steps a day in daylight (on fog days walk indoors) · no tea or coffee after 2 PM · screens off from 9:00 PM · main meal around 6:30 PM, or a light late dinner finished 60+ min before lights-out · no Reels or Shorts after 9 PM (Digital Wellbeing Bedtime mode helps) · no screens in bed · one phone-free 50-minute deep-work sprint on your top goal each day · same wake time every day, Sundays included. If you are lean and want size, eat about 300 kcal above maintenance; if your waist grows faster than your strength, trim it. Muscle grows, memory sets and the voice recovers while you sleep.</div>'+(pl.wd===0?'<div class="videobox" style="margin-top:8px"><b>📊 Sunday check</b><div class="small" style="margin-top:4px">Weigh in at the same time on the same scale. On the last Sunday of each level, do the Level-Up Test in Progress (Day 1 is your baseline). Then your 10-minute weekly review: count your perfect days, name the block you skipped or rushed most, and write one rule that fixes it. Record a 3-minute talk and compare it with last week\u2019s.</div></div>':'');
+  html += taskCard('', 'night', 'Night shutdown & sleep', '9:15 – 9:30 PM · plan, reflect, lights out', nightDetail, doneObj);
+  // Journal
+  html += '<div class="card"><div class="time">DAILY JOURNAL</div><h3>Reflect</h3>';
+  html += '<p class="desc"><i>'+pl.jprompt+'</i></p>';
+  html += '<textarea class="sans" id="journalArea" style="width:100%;min-height:90px;background:#0D1319;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:14px" placeholder="Write here — saved automatically on this device.">'+ (JSON.parse(localStorage.getItem('wa2_journal')||'{}')[keyFor(target)] || '') +'</textarea>';
+  html += '</div>';
+
+  document.getElementById('today').innerHTML = html;
+  var gb=document.getElementById('gridStart'); if(gb) gb.onclick=function(){ gridGame(document.getElementById('gridBox')); };
+
+  document.getElementById('journalArea').addEventListener('input', function(e){
+    var j = JSON.parse(localStorage.getItem('wa2_journal')||'{}');
+    j[keyFor(target)] = e.target.value;
+    localStorage.setItem('wa2_journal', JSON.stringify(j));
+  });
+  document.getElementById('wakeBtn').addEventListener('click', function(){ toggleWake(this); });
+  document.getElementById('liteBtn').addEventListener('click', function(){ var o=DONE[keyFor(target)]||{}; o.lite=!o.lite; DONE[keyFor(target)]=o; saveDone(DONE); renderToday(); });
+  Array.prototype.forEach.call(document.querySelectorAll('.task-main'), function(el){
+    el.addEventListener('click', function(){
+      var t = el.getAttribute('data-task');
+      var o = DONE[keyFor(target)] || {};
+      o[t] = !o[t]; if(o[t] && navigator.vibrate) navigator.vibrate(25);
+      DONE[keyFor(target)] = o;
+      saveDone(DONE);
+      renderToday();
+      renderWeek();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.info-btn'), function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var id = btn.getAttribute('data-detail');
+      OPEN[id] = !OPEN[id];
+      renderToday();
+    });
+  });
+  document.getElementById('prevDay').addEventListener('click', function(){ viewDate = new Date(viewDate.getFullYear(),viewDate.getMonth(),viewDate.getDate()-1); renderToday(); });
+  document.getElementById('nextDay').addEventListener('click', function(){ viewDate = new Date(viewDate.getFullYear(),viewDate.getMonth(),viewDate.getDate()+1); renderToday(); });
+  document.getElementById('jumpToday').addEventListener('click', function(){ var n=nowIST(); n.setHours(0,0,0,0); viewDate = inProgram(n)?n:viewDate; renderToday(); });
+}
+
+/* ============ RENDER: WEEK ============ */
+function renderWeek(){
+  var now = nowIST();
+  if(!inProgram(now)) now = START;
+  var i = dayIndex(now);
+  var startOfWeek = new Date(START.getFullYear(),START.getMonth(),START.getDate()+Math.floor(i/7)*7);
+  var pl0 = dayPlan(startOfWeek);
+  var html = '<div class="card"><div class="phaseLabel">'+pl0.phase.name+' phase</div><h2 style="margin:4px 0">Week '+pl0.w+'</h2>';
+  html += '<div class="weekgrid">';
+  for(var k=0;k<7;k++){
+    var d = new Date(startOfWeek.getFullYear(),startOfWeek.getMonth(),startOfWeek.getDate()+k);
+    if(!inProgram(d)) continue;
+    var o = DONE[keyFor(d)]||{}; var c=TASK_IDS.filter(function(t){return o[t];}).length;
+    var cls = 'wcell'+(sameDay(d,now)?' today':'')+(c===TASK_IDS.length?' done':'')+(d<stripTime(now)&&c<TASK_IDS.length?' past':'');
+    html += '<div class="'+cls+'" data-jump="'+d.toISOString()+'">'+fmtShort(d)+'</div>';
+  }
+  html += '</div><p class="small">Tap a day to open it in Today.</p></div>';
+
+  // list all 7 days with short summary
+  for(var k2=0;k2<7;k2++){
+    var d2 = new Date(startOfWeek.getFullYear(),startOfWeek.getMonth(),startOfWeek.getDate()+k2);
+    if(!inProgram(d2)) continue;
+    var p2 = dayPlan(d2);
+    html += '<div class="card"><b>'+fmtDate(d2)+'</b>'+
+      '<div class="small" style="margin-top:6px">🧘 '+p2.med.name+' &nbsp;·&nbsp; 🗣 '+p2.vid.channel+' &nbsp;·&nbsp; 🎙 '+p2.voice.focus+' &nbsp;·&nbsp; 💪 '+p2.workout.title+'</div></div>';
+  }
+  document.getElementById('week').innerHTML = html;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-jump]'), function(el){
+    el.addEventListener('click', function(){ viewDate = new Date(el.dataset.jump); viewDate.setHours(0,0,0,0); showTab('today'); renderToday(); });
+  });
+}
+function sameDay(a,b){ return stripTime(a).getTime()===stripTime(b).getTime(); }
+function localISO(){ var n=nowIST(); return n.getFullYear()+'-'+('0'+(n.getMonth()+1)).slice(-2)+'-'+('0'+n.getDate()).slice(-2); }
+
+/* ============ RENDER: CALENDAR ============ */
+function renderCalendar(){
+  var html = '<div class="card"><h2 style="margin-top:0">Jump to a day</h2>';
+  html += '<input type="date" id="jumpDate" min="2026-12-01" value="'+localISO()+'"> ';
+  html += '<button class="act" id="jumpBtn">Go</button></div>';
+  html += '<div class="card"><h3 style="margin-top:0">Program overview</h3><table class="sans" style="width:100%;border-collapse:collapse;font-size:13px">';
+  html += '<tr style="color:var(--mute);text-align:left"><th>Weeks</th><th>Phase</th><th>Intensity</th></tr>';
+  PHASES.forEach(function(p){
+    html += '<tr style="border-top:1px solid var(--line)"><td style="padding:6px 0">'+p.weeks[0]+'–'+p.weeks[1]+'</td><td>'+p.name+'</td><td>'+p.mult.toFixed(2)+'×</td></tr>';
+  });
+  html += '</table><p class="small" style="margin-top:8px">From week 23 the arc never stops: Mastery levels raise intensity 0.05× every 4 weeks (up to 2.6×), and every 4th week is a recovery week at 85%. A new Level begins every 4 weeks.</p></div>';
+  html += '<div class="card"><h3 style="margin-top:0">6-month milestones</h3><div class="small"><b>Day 30:</b> 5:00 AM wake on 25+ days · 15 push-ups (incline is fine) · 60 s plank · a 2-min slow talk with 5 or fewer fillers.<br><br><b>Day 60:</b> 20 full push-ups · 90 s plank · 5 pull-up negatives of 5 s · 10 min of meditation without drifting off · a 3-min talk.<br><br><b>Day 90:</b> 30 push-ups · first pull-up · 2 min plank · a clearly lower, steadier voice vs your Day 1 recording · 5 min unscripted speaking · a 25 s steady sss exhale.<br><br><b>Day 120:</b> 35 push-ups · 3 pull-ups · full 30 min of stillness · speak to a real group.<br><br><b>Day 150:</b> 45 push-ups · 5 pull-ups · a 10-min talk · visible change in waist and shoulders.<br><br><b>Day 180:</b> 50+ push-ups · 8 pull-ups · a 20-min talk or session you lead · a 150+ day streak · a calm 120–140 words a minute in everyday conversation, with no rushing or blocking. Then Level 7 begins and it keeps going.</div></div>';
+  document.getElementById('calendar').innerHTML = html;
+  document.getElementById('jumpBtn').addEventListener('click', function(){
+    var v = document.getElementById('jumpDate').value;
+    if(!v) return;
+    var parts = v.split('-');
+    viewDate = new Date(+parts[0], +parts[1]-1, +parts[2]);
+    showTab('today'); renderToday();
+  });
+}
+
+/* ============ RENDER: FULL GUIDE ============ */
+function renderGuide(){
+  var html = '<div class="card"><h2 style="margin-top:0">Use this as an app on your phone</h2>'+
+  '<p class="desc">This whole program — every meditation, video reference, tongue twister, voice drill and workout — is written directly into this one file. Nothing loads from the internet, so once the page is open it works with your phone in airplane mode.</p>'+
+  '<p class="desc"><b>Android (Chrome):</b> a blue \u201C\ud83d\udcf2 Install App\u201D button appears at the bottom-right of the screen as soon as Chrome recognises this page as installable \u2014 tap it and confirm. If it hasn\u2019t appeared yet, use the \u22ee menu \u2192 \u201CAdd to Home screen\u201D / \u201CInstall app\u201D instead.</p>'+
+  '<p class="desc"><b>iPhone (Safari):</b> Safari has no \u201CInstall\u201D menu item \u2014 open this page in Safari, tap the Share icon, then \u201CAdd to Home Screen.\u201D That is the iOS equivalent of installing: it opens full-screen with no address bar, from its own icon.</p>'+
+  '<p class="desc">Your daily check-offs and journal entries save automatically to this device only, using the browser\u2019s local storage — nothing is uploaded anywhere. Use the Export button on the Progress tab any time to save a backup .json file.</p></div>';
+
+  html += homeCards();
+
+  html += '<div class="card"><h2 style="margin-top:0">How this program works</h2>'+
+  '<p class="desc">Every day of the Winter Arc follows the same five fixed blocks: four training blocks plus a 9:15 PM night shutdown. What changes week to week is <b>intensity</b> — sets, reps, hold-times, and the depth of each meditation/voice technique scale up automatically as you move through five phases. Nothing here needs an internet connection once this file is saved to your device — open it directly in any browser, any time.</p>'+
+  '<div class="grid2">'+
+  '<div><b class="phaseLabel">5:00–6:00 AM</b><p class="small">Meditation. Rotates through 7 techniques by day of week — box breathing, body scan, breath awareness, visualization, walking meditation, loving-kindness, open awareness.</p></div>'+
+  '<div><b class="phaseLabel">6:00–7:00 AM</b><p class="small">Communication & English skill development. Watch a specific video, then speak, drill a tongue twister, and read aloud.</p></div>'+
+  '<div><b class="phaseLabel">7:00–8:00 PM</b><p class="small">Two weeks of deep-voice and slow-speech lab, then two weeks of live public-speaking practice — repeating forever at rising levels.</p></div>'+
+  '<div><b class="phaseLabel">8:00–9:00 PM</b><p class="small">Body & physique — a 6-day push/pull/legs/conditioning/full-body/core split with one recovery day, scaling in volume by phase.</p></div>'+
+  '</div></div>';
+
+  html += '<div class="card"><h3 style="margin-top:0">Meditation types & how each builds concentration</h3>';
+  MED.forEach(function(m){
+    html += '<div style="margin-bottom:12px"><b>'+m.name+'</b><div class="small" style="margin-top:2px;color:var(--frost)">'+m.type+'</div><div class="small" style="margin-top:3px">'+m.builds+'</div></div>';
+  });
+  html += '</div>';
+
+  html += '<div class="card"><h3 style="margin-top:0">The 5 phases</h3>';
+  PHASES.forEach(function(p){
+    html += '<div style="margin-bottom:12px"><b>'+p.name+'</b> — weeks '+p.weeks[0]+'–'+p.weeks[1]+' <span class="pill">'+p.mult.toFixed(2)+'× volume</span><div class="small" style="margin-top:3px">Meditation add-on: '+p.med+'</div><div class="small">Voice add-on: '+p.voice+'</div></div>';
+  });
+  html += '</div>';
+
+  html += '<div class="card"><h3 style="margin-top:0">Communication curriculum (2 weeks per skill, repeats at a higher level)</h3><ol class="small">'+COMM.map(function(c){return '<li><b>'+c[0]+'</b></li>';}).join('')+'</ol></div>';
+  html += '<div class="card"><h3 style="margin-top:0">Weekly workout split</h3>';
+  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  WORKOUT.forEach(function(w,idx){
+    html += '<div style="margin-bottom:8px"><b>'+days[idx]+':</b> '+w.title+'</div>';
+  });
+  html += '</div>';
+
+  var tl = {}, tOrder = [];
+  function addTimed(name, lo, hi, max, u){
+    if(!tl[name]){ tl[name] = {lo:lo, hi:hi, max:max, u:u}; tOrder.push(name); }
+    else { tl[name].lo = Math.min(tl[name].lo, lo); tl[name].hi = Math.max(tl[name].hi, hi); }
+  }
+  WORKOUT.forEach(function(w){ w.ex.forEach(function(e){ if(e.dmax) addTimed(e.n.indexOf('HIIT')===0?'HIIT work intervals':e.n, e.d, e.d, e.dmax, e.unit.indexOf('min')===0?'min':'s'); }); });
+  FIN.forEach(function(f){ addTimed('Finisher: '+f.n, f.d, f.d, f.dmax, 's'); });
+  html += '<div class="card"><h3 style="margin-top:0">How timed exercises progress</h3>'+
+    '<p class="desc">Holds, HIIT work intervals, the brisk walk and the finisher get longer as you improve. Two things lengthen them: the program\u2019s intensity level (the same multiplier your reps use) and a small bonus earned every time you complete a session that includes the exercise (+1 s each, +15 s for the brisk walk). Recovery weeks take 15% off. Skipped days add nothing. Warm-ups, cooldowns, stretching and the easy walk stay fixed.</p>'+
+    '<ul class="small">'+tOrder.map(function(n){ var t=tl[n]; return '<li>'+n+': '+(t.lo===t.hi?t.lo:t.lo+'\u2013'+t.hi)+' \u2192 '+t.max+' '+t.u+' max</li>'; }).join('')+'</ul>'+
+    '<p class="small">At the maximum, make the exercise harder instead of longer (see Level progression on the Today screen).</p></div>';
+
+  html += '<div class="card"><h3 style="margin-top:0">All tongue twisters in the rotation</h3><ul>'+TWISTERS.map(function(t){return '<li>'+t+'</li>';}).join('')+'</ul></div>';
+
+  html += '<div class="card"><h3 style="margin-top:0">Evening deep-voice tongue twisters (7pm resonance drill)</h3><ul>'+EVENING_TWISTERS.map(function(t){return '<li>'+t+'</li>';}).join('')+'</ul></div>';
+
+  document.getElementById('guide').innerHTML = html;
+}
+
+/* ============ RENDER: PROGRESS ============ */
+function renderProgress(){
+  var totalTasks=0, doneTasks=0;
+  for(var i=0;i<elapsed();i++){
+    var o = DONE[i+""];
+    totalTasks+=TASK_IDS.length;
+    if(o) doneTasks += TASK_IDS.filter(function(t){return o[t];}).length;
+  }
+  var blockPct = totalTasks? Math.round(doneTasks/totalTasks*100):0;
+  var stats = computeStats();
+  var html = '<div class="stats"><div class="stat"><div class="v">'+stats.streak+'</div><div class="l">day streak</div></div>'
+    + '<div class="stat"><div class="v">'+stats.perfect+'</div><div class="l">perfect days</div></div>'
+    + '<div class="stat"><div class="v">'+stats.pct+'%</div><div class="l">consistency</div></div></div>';
+  html += '<div class="card"><h2 style="margin-top:0">Overall progress</h2>'+
+    '<div class="meta">'+stats.perfect+' fully complete days out of '+elapsed()+' days so far &nbsp;·&nbsp; '+blockPct+'% of all individual blocks logged</div>'+
+    '<div class="progressbar"><i style="width:'+blockPct+'%"></i></div></div>';
+  var cd=Math.max(0,dayIndex(nowIST())), lv=level(weekNumber(cd));
+  html += '<div class="card"><h3 style="margin-top:0">Current level</h3><div class="meta">Level '+lv+' · week '+weekNumber(cd)+' · next level in '+(28*lv-cd)+' days</div></div>';
+  var T=loadTests(), tk=Object.keys(T).sort(function(a,b){return a-b;});
+  html += '<div class="card"><h3 style="margin-top:0">Level-Up Test · Level '+lv+'</h3><p class="small">Test on Day 1 (baseline) and again on the last Sunday of every level. Log honest numbers; beating your last level is the only goal.</p><div class="grid2">'+TEST_FIELDS.map(function(f){return '<label class="small">'+f[1]+'<input class="sans" type="number" inputmode="decimal" step="any" id="t_'+f[0]+'" value="'+((T[lv]||{})[f[0]]||'')+'" style="width:100%;background:#0D1319;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px"></label>';}).join('')+'</div><button class="act" id="saveTest" style="margin-top:10px">Save Level '+lv+' results</button>'+(tk.length?'<div style="overflow-x:auto"><table class="sans" style="width:100%;font-size:12px;margin-top:10px;border-collapse:collapse"><tr style="color:var(--mute);text-align:left"><th>Lvl</th>'+TEST_FIELDS.map(function(f){return '<th>'+f[2]+'</th>';}).join('')+'</tr>'+tk.map(function(k){return '<tr style="border-top:1px solid var(--line)"><td>'+k+'</td>'+TEST_FIELDS.map(function(f){return '<td>'+(T[k][f[0]]||'–')+'</td>';}).join('')+'</tr>';}).join('')+'</table></div>':'')+'</div>';
+  html += verdict(T,lv);
+  html += '<div class="card"><h3 style="margin-top:0">My why</h3><p class="small">Write why you are doing this and who you will be in 6 months. It shows on your Today screen.</p><textarea class="sans" id="whyArea" style="width:100%;min-height:80px;background:#0D1319;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:14px">'+(function(){ var w=''; try{ w=localStorage.getItem('wa2_why')||''; }catch(e){} return w.replace(/&/g,'&amp;').replace(/</g,'&lt;'); })()+'</textarea><button class="act" id="saveWhy" style="margin-top:8px">Save my why</button></div>';
+  html += '<div class="card"><h3 style="margin-top:0">Data & reset</h3><p class="small">All progress and journal entries are stored only in this browser\u2019s local storage on this device — nothing is uploaded anywhere.</p>'+
+    '<div class="rowbtns"><button class="act ghost" id="exportBtn">Export my data (.json)</button><button class="act ghost" id="importBtn">Restore backup</button><input type="file" id="importFile" accept="application/json" style="display:none"><button class="act ghost" id="resetBtn">Reset all progress</button></div></div>';
+  document.getElementById('progress').innerHTML = html;
+  document.getElementById('saveWhy').addEventListener('click', function(){ try{ localStorage.setItem('wa2_why', document.getElementById('whyArea').value); }catch(e){} renderToday(); });
+  document.getElementById('saveTest').addEventListener('click', function(){ var t=loadTests(); t[lv]={}; TEST_FIELDS.forEach(function(f){ var v=document.getElementById('t_'+f[0]).value; if(v!=='') t[lv][f[0]]=+v; }); try{ localStorage.setItem('wa2_tests', JSON.stringify(t)); }catch(e){} renderProgress(); });
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    if(confirm('Erase all logged progress and journal entries on this device?')){
+      localStorage.removeItem('wa2_done'); localStorage.removeItem('wa2_journal'); localStorage.removeItem('wa2_tests');
+      DONE = {}; renderToday(); renderWeek(); renderProgress();
+    }
+  });
+  document.getElementById('exportBtn').addEventListener('click', function(){
+    var data = {done:DONE, journal:JSON.parse(localStorage.getItem('wa2_journal')||'{}'), tests:loadTests(), why:(localStorage.getItem('wa2_why')||'')};
+    var blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='winter-arc-backup.json'; a.click(); try{ localStorage.setItem('wa2_lastbackup', String(dayIndex(nowIST()))); }catch(e){}
+  });
+  document.getElementById('importBtn').addEventListener('click', function(){ document.getElementById('importFile').click(); });
+  document.getElementById('importFile').addEventListener('change', function(e){
+    var f=e.target.files[0]; if(!f) return; var r=new FileReader();
+    r.onload=function(){ try{ var d=JSON.parse(r.result); DONE=d.done||{}; saveDone(DONE); localStorage.setItem('wa2_journal', JSON.stringify(d.journal||{})); localStorage.setItem('wa2_tests', JSON.stringify(d.tests||{})); localStorage.setItem('wa2_why', d.why||''); renderToday(); renderWeek(); renderProgress(); alert('Backup restored.'); }catch(x){ alert('That file is not a valid backup.'); } };
+    r.readAsText(f);
+  });
+}
+
+/* ============ TABS ============ */
+function showTab(name){ CURTAB=name;
+  ['today','week','calendar','guide','progress'].forEach(function(t){
+    document.getElementById(t).style.display = (t===name)?'block':'none';
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('nav.tabs button'), function(b){
+    b.classList.toggle('active', b.dataset.tab===name);
+  });
+}
+Array.prototype.forEach.call(document.querySelectorAll('nav.tabs button'), function(b){
+  b.addEventListener('click', function(){
+    gotoTab(b.dataset.tab,true);
+  });
+});
+
+/* ============ SPLASH SCREEN ============ */
+(function(){
+  var splash = document.getElementById('splash');
+  var field = document.getElementById('splashSnow');
+  var n = 46;
+  for(var i=0;i<n;i++){
+    var s = document.createElement('span');
+    var size = (Math.random()*3+1.5).toFixed(1);
+    var left = (Math.random()*100).toFixed(1);
+    var dur = (Math.random()*6+5).toFixed(1);
+    var delay = (Math.random()*6).toFixed(1);
+    var drift = (Math.random()*40-20).toFixed(0);
+    s.style.left = left+'%';
+    s.style.width = size+'px';
+    s.style.height = size+'px';
+    s.style.opacity = (Math.random()*.5+.4).toFixed(2);
+    s.style.animationDuration = dur+'s';
+    s.style.animationDelay = '-'+delay+'s';
+    s.style.setProperty('--drift', drift+'px');
+    field.appendChild(s);
+  }
+  var msgs=["Sharpening the blade…","Steadying the breath…","Finding the low voice…","Building the body…","Rising at 5 AM…"], mi=0, mel=document.getElementById('splashMsg');
+  var mt=setInterval(function(){ mi++; if(mi>=msgs.length||hidden){ clearInterval(mt); return; } mel.textContent=msgs[mi]; },620);
+  var hidden = false;
+  function hideSplash(){
+    if(hidden) return;
+    hidden = true;
+    splash.classList.add('hide');
+    setTimeout(function(){ splash.style.display='none'; }, 750);
+  }
+  splash.addEventListener('click', hideSplash);
+  setTimeout(hideSplash, 3300);
+})();
+
+/* ============ SERVICE WORKER (offline caching) ============ */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').then(function(){ return navigator.serviceWorker.ready; }).then(function(){ var b=document.getElementById('offBadge'); if(b) b.textContent='✓ offline ready'; }).catch(function(err){ console.log('SW registration failed:', err); });
+  });
+}
+
+/* ============ PWA INSTALL HANDLING ============ */
+(function(){
+  var isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+  if(isStandalone) return; // already installed/running as an app — nothing to show
+
+  var installBtn = document.getElementById('installBtn');
+  var deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'block';
+  });
+  installBtn.addEventListener('click', function(){
+    if(!deferredPrompt) return;
+    installBtn.style.display = 'none';
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(){ deferredPrompt = null; });
+  });
+  window.addEventListener('appinstalled', function(){
+    installBtn.style.display = 'none';
+  });
+
+  // iOS Safari has no beforeinstallprompt event, so show a manual hint instead
+  var ua = window.navigator.userAgent;
+  var isIOS = /iPad|iPhone|iPod/.test(ua);
+  var isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
+  if(isIOS && isSafari){
+    document.getElementById('iosHint').style.display = 'block';
+  }
+})();
+
+/* ============ INIT ============ */
+(function(){
+  var n = nowIST();
+  document.getElementById('todayTag').textContent = inProgram(n) ? ('Day '+(dayIndex(n)+1)+' · Level '+level(weekNumber(dayIndex(n)))) : 'Starts 1 Dec 2026';
+})();
+renderToday();
+(function(){ var q=(location.search.match(/tab=(\w+)/)||[])[1]; if(q&&document.getElementById(q)){ showTab(q); if(q==='progress') renderProgress(); } })();
+/* ============ v13: Android niceties ============ */
+LASTDAY=dayIndex(nowIST());
+window.addEventListener('popstate',function(e){ gotoTab((e.state&&e.state.tab)||'today',false); });
+try{ history.replaceState({tab:CURTAB},''); }catch(e){}
+try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(function(){}); }catch(e){}
+document.addEventListener('visibilitychange',function(){ if(!document.hidden) dayRoll(); });
+setInterval(function(){ var e=document.getElementById('nowBar'); if(e) e.textContent=nowNext(); dayRoll(); },20000);
+</script>
+</body>
+</html>
